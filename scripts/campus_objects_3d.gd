@@ -188,7 +188,10 @@ func interact(player: CharacterBody3D) -> void:
 						TimeSystem.sync_to_shared_world_clock()
 					needs.energy = needs.max_energy
 					needs.stat_changed.emit(&"energy", needs.energy, needs.max_energy)
-					if StudentProfile.owned_upgrades.has("hostel_fan"):
+					if StudentProfile.owned_upgrades.has("orthopedic_mattress"):
+						needs.modify_faith(25.0)
+						_show_feedback(player, "Deep sleep on your Orthopedic Mattress! Energy 100%, Faith +25, Full Focus!")
+					elif StudentProfile.owned_upgrades.has("hostel_fan"):
 						needs.modify_faith(15.0)
 						_show_feedback(player, "Power rested with your rechargeable fan on! Energy 100%, Faith +15!")
 					else:
@@ -201,7 +204,10 @@ func interact(player: CharacterBody3D) -> void:
 					TimeSystem.sync_to_shared_world_clock()
 				needs.energy = needs.max_energy
 				needs.stat_changed.emit(&"energy", needs.energy, needs.max_energy)
-				if StudentProfile.owned_upgrades.has("hostel_fan"):
+				if StudentProfile.owned_upgrades.has("orthopedic_mattress"):
+					needs.modify_faith(25.0)
+					_show_feedback(player, "Deep sleep on your Orthopedic Mattress! Energy 100%, Faith +25, Full Focus!")
+				elif StudentProfile.owned_upgrades.has("hostel_fan"):
 					needs.modify_faith(15.0)
 					_show_feedback(player, "Power rested with your rechargeable fan on! Energy 100%, Faith +15!")
 				else:

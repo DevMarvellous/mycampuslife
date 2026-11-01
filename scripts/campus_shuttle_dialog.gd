@@ -5,6 +5,7 @@ extends Control
 ## Lets students board affordable campus shuttles between distant university zones with driver banter.
 
 signal destination_chosen(scene_path: String)
+signal danfo_drive_requested(player: CharacterBody3D)
 signal dialog_closed
 
 
@@ -142,6 +143,36 @@ func _build_destinations() -> void:
 
 	for child in dest_container.get_children():
 		child.queue_free()
+
+	var drive_btn := Button.new()
+	drive_btn.text = "🚌 DRIVE CAMPUS DANFO SHUTTLE (Earn ₦150 / Student)"
+	drive_btn.custom_minimum_size = Vector2(0, 48)
+	drive_btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	drive_btn.add_theme_font_size_override(&"font_size", 14)
+	drive_btn.add_theme_color_override(&"font_color", Color(1.0, 0.9, 0.25))
+
+	var d_style := StyleBoxFlat.new()
+	d_style.bg_color = Color(0.18, 0.14, 0.04, 0.98)
+	d_style.border_width_left = 2
+	d_style.border_width_top = 2
+	d_style.border_width_right = 2
+	d_style.border_width_bottom = 2
+	d_style.border_color = Color(0.96, 0.78, 0.08, 0.95)
+	d_style.corner_radius_top_left = 8
+	d_style.corner_radius_top_right = 8
+	d_style.corner_radius_bottom_right = 8
+	d_style.corner_radius_bottom_left = 8
+	drive_btn.add_theme_stylebox_override(&"normal", d_style)
+
+	drive_btn.pressed.connect(func():
+		var p = current_player
+		close_dialog()
+		danfo_drive_requested.emit(p)
+	)
+	dest_container.add_child(drive_btn)
+
+	var sep := HSeparator.new()
+	dest_container.add_child(sep)
 
 	for d in DESTINATIONS:
 		var btn = Button.new()

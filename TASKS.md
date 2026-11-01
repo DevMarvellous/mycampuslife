@@ -1,6 +1,6 @@
 # My Campus Life - Upcoming Tasks Roadmap
 
-This file contains all the tasks that still need to be done. It does not list finished items. Each task explains what needs to be created and how to build it. All features are designed to be wholesome, fun, clean, and engaging for all players.
+This file contains all the tasks that still need to be done. It does not list finished items. Each task explains what needs to be created and how to build it. All features are designed to be wholesome, fun, clean, and engaging for all players with strong Christian values.
 
 ---
 
@@ -18,23 +18,35 @@ Connect Google OAuth credentials so players can sign in with one tap using their
 
 ---
 
-## Task 2: Hostel Room Customization and Study Hub
+## Task 2: Mama Put Canteen Serving and Nigerian Food Mini Game
 ### What Needs to be Done
-Allow players to personalize their hostel room with useful furniture, study lamps, bookshelves, and home decor.
+Allow students to work an honest lunch shift at Mama Put canteen to earn extra pocket money and free meals by assembling authentic Nigerian food plates for hungry coursemates.
 
 ### How to Do It
-1. In mall items data gd, add new placeable room items such as Study Lamp, Double Deck Bookshelf, QASA Standing Fan, Ergonomic Desk Chair, and Campus Map Wall Poster.
-2. In base room gd, save owned furniture in student profile and display them in the hostel room upon entry.
-3. High level study furniture grants passive study focus buffs, speeding up exam preparation.
+1. In mama put scene and food menu gd, add a Work Canteen Shift button.
+2. Create a fast plate assembly minigame where student NPC customers order specific combos such as Smoky Jollof with Fried Plantain and Chicken, or Pounded Yam with Egusi and Goat Meat.
+3. The player selects the correct food items on the serving trays before the timer expires.
+4. Serving plates correctly rewards 400 to 800 Naira per customer, restores student hunger by 40 percent, and earns positive compliments from Mama Cashout.
 
 ---
 
-## Task 3: Driveable Campus Danfo Bus and Keke Shuttle
+## Task 3: Campus Fellowship Scripture Sword Drill and Devotional Challenge
 ### What Needs to be Done
-Let players drive the yellow Danfo bus or tricycle Keke around the campus ring road to transport students between faculties.
+Add a wholesome Christian fellowship daily devotional challenge and Bible study quiz at the Chapel Hall altar bench.
 
 ### How to Do It
-1. In campus gate scene, place an interactive yellow Danfo bus.
-2. Create simple arcade vehicle physics with forward drive, reverse, steering, and braking.
-3. Place passenger stops at Hostel, Lecture Hall, Library, and Stadium.
-4. Picking up waiting student NPCs and dropping them at their destination rewards 150 Naira transport fare per trip.
+1. In campus objects 3d gd, expand the fellowship altar interaction to open the Fellowship Scripture Challenge modal.
+2. Present uplifting questions based on Proverbs, Psalms, Matthew, and Romans covering wisdom, perseverance, academic diligence, and brotherly love.
+3. Answering questions rewards 50 Faith points, removes study fatigue, and provides a fellowship love offering of 1000 Naira from fellowship alumni.
+
+---
+
+## Task 4: Grand Convocation Ceremony and Degree Honors Certificate
+### What Needs to be Done
+Celebrate the player graduation at the Convocation Hall when completing the academic semesters with high CGPA.
+
+### How to Do It
+1. In convocation hall tscn and senate building gd, track when a student finishes all required semester courses.
+2. When eligible, allow the student to wear the academic gown and mortarboard cap and walk up the ceremonial stage.
+3. The Vice Chancellor congratulates the student and presents a Degree Honors Certificate based on final CGPA (First Class, Second Class Upper, or Second Class Lower).
+4. Provide a 1-tap WhatsApp and PNG badge download so players can share their graduation achievement with friends.

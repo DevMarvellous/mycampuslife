@@ -234,6 +234,17 @@ func _on_study_selected(opt: Dictionary) -> void:
 	var cgpa_gain: float = float(opt["cgpa_gain"])
 	var minutes: int = int(opt["time_minutes"])
 
+	# Apply hostel room study furniture buffs
+	StudentProfile.load_from_disk()
+	if StudentProfile.owned_upgrades.has("double_bookshelf"):
+		cgpa_gain *= 1.25
+	if StudentProfile.owned_upgrades.has("study_lamp"):
+		energy_cost *= 0.80
+	if StudentProfile.owned_upgrades.has("executive_desk_chair"):
+		energy_cost *= 0.75
+	if StudentProfile.owned_upgrades.has("campus_wall_poster"):
+		needs.modify_faith(8.0)
+
 	needs.modify_energy(-energy_cost)
 	needs.modify_cgpa(cgpa_gain)
 	if cash_reward != 0:

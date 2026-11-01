@@ -29,6 +29,7 @@ const HostelCookingScene = preload("res://scenes/hostel_cooking_dialog.tscn")
 const BackpackScene = preload("res://scenes/backpack_menu.tscn")
 const FridgeScene = preload("res://scenes/fridge_dialog.tscn")
 const PenaltyScene = preload("res://scenes/penalty_mini_game.tscn")
+const DanfoGameScene = preload("res://scenes/danfo_route_game.tscn")
 var phone_menu: Control = null
 var salon_menu: Control = null
 var chat_menu: Control = null
@@ -37,6 +38,7 @@ var mall_menu: Control = null
 var snooker_menu: Control = null
 var gigs_menu: Control = null
 var shuttle_dialog: Control = null
+var danfo_game: Control = null
 var library_study_dialog: Control = null
 var coursework_menu: Control = null
 var lecture_session_dialog: Control = null
@@ -516,6 +518,81 @@ func _configure_dynamic_hostel_room() -> void:
 				lap_mat.roughness = 0.2
 				laptop_mesh.material_override = lap_mat
 
+		if ProfileStore.owned_upgrades.has("double_bookshelf") and not decor.has_node("DoubleBookshelfMesh"):
+			var b_shelf := MeshInstance3D.new()
+			b_shelf.name = "DoubleBookshelfMesh"
+			var b_box := BoxMesh.new()
+			b_box.size = Vector3(1.1, 1.6, 0.42)
+			b_shelf.mesh = b_box
+			var b_mat := StandardMaterial3D.new()
+			b_mat.albedo_color = Color(0.28, 0.16, 0.08, 1.0)
+			b_mat.roughness = 0.5
+			b_shelf.material_override = b_mat
+			b_shelf.position = Vector3(3.6, 0.8, -7.8)
+			decor.add_child(b_shelf)
+
+			var books := MeshInstance3D.new()
+			books.name = "BooksMesh"
+			var bk_box := BoxMesh.new()
+			bk_box.size = Vector3(0.95, 0.4, 0.38)
+			books.mesh = bk_box
+			var bk_mat := StandardMaterial3D.new()
+			bk_mat.albedo_color = Color(0.18, 0.45, 0.72, 1.0)
+			books.material_override = bk_mat
+			books.position = Vector3(0, 0.15, 0.05)
+			b_shelf.add_child(books)
+
+		if ProfileStore.owned_upgrades.has("campus_wall_poster") and not decor.has_node("CampusMapPosterMesh"):
+			var poster := MeshInstance3D.new()
+			poster.name = "CampusMapPosterMesh"
+			var p_box := BoxMesh.new()
+			p_box.size = Vector3(2.4, 1.2, 0.03)
+			poster.mesh = p_box
+			var p_mat := StandardMaterial3D.new()
+			p_mat.albedo_color = Color(0.08, 0.28, 0.18, 1.0)
+			p_mat.roughness = 0.3
+			poster.material_override = p_mat
+			poster.position = Vector3(-2.8, 2.3, -8.90)
+			decor.add_child(poster)
+
+			var p_lbl := Label3D.new()
+			p_lbl.text = "🏛️ FEDERAL UNIVERSITY • SEEK WISDOM & EXCELLENCE • PROV 4:7"
+			p_lbl.font_size = 18
+			p_lbl.modulate = Color(1.0, 0.88, 0.35)
+			p_lbl.position = Vector3(0, 0, 0.02)
+			poster.add_child(p_lbl)
+
+		if ProfileStore.owned_upgrades.has("orthopedic_mattress") and not decor.has_node("OrthopedicMattressMesh"):
+			var mattress := MeshInstance3D.new()
+			mattress.name = "OrthopedicMattressMesh"
+			var m_box := BoxMesh.new()
+			m_box.size = Vector3(1.85, 0.26, 1.05)
+			mattress.mesh = m_box
+			var m_mat := StandardMaterial3D.new()
+			m_mat.albedo_color = Color(0.15, 0.45, 0.75, 1.0)
+			mattress.material_override = m_mat
+			mattress.position = Vector3(-6.5, 0.72, -6.0)
+			decor.add_child(mattress)
+
+			var pillow := MeshInstance3D.new()
+			pillow.name = "ErgonomicPillowMesh"
+			var pil_box := BoxMesh.new()
+			pil_box.size = Vector3(0.42, 0.14, 0.75)
+			pillow.mesh = pil_box
+			var pil_mat := StandardMaterial3D.new()
+			pil_mat.albedo_color = Color(0.95, 0.95, 0.98, 1.0)
+			pillow.material_override = pil_mat
+			pillow.position = Vector3(-7.1, 0.86, -6.0)
+			decor.add_child(pillow)
+
+		if ProfileStore.owned_upgrades.has("executive_desk_chair"):
+			var chair_mesh = decor.get_node_or_null("DeskChair") as MeshInstance3D
+			if chair_mesh:
+				var c_mat := StandardMaterial3D.new()
+				c_mat.albedo_color = Color(0.1, 0.1, 0.12, 1.0)
+				c_mat.metallic = 0.5
+				chair_mesh.material_override = c_mat
+
 
 func _connect_interactive_fixtures() -> void:
 	# Scan for any interactive fixtures in the room and connect them
@@ -643,10 +720,17 @@ func _on_fixture_menu_requested(menu_type: StringName, p: CharacterBody3D) -> vo
 					_on_menu_closed()
 					_go_to_scene(target_scene, true)
 				)
+			if shuttle_dialog.has_signal("danfo_drive_requested"):
+				shuttle_dialog.danfo_drive_requested.connect(func(player_char: CharacterBody3D):
+					_on_menu_closed()
+					_open_danfo_game(player_char)
+				)
 		if shuttle_dialog:
 			shuttle_dialog.open_shuttle(p)
 		elif mobile_controls and mobile_controls.has_method("_toggle_transit_sheet"):
 			mobile_controls._toggle_transit_sheet()
+	elif menu_type == &"danfo" or menu_type == &"danfo_drive":
+		_open_danfo_game(p)
 	elif menu_type == &"library_study":
 		if not library_study_dialog and menus_layer:
 			library_study_dialog = LibraryStudyScene.instantiate()
@@ -745,6 +829,21 @@ func _open_final_exam(p: CharacterBody3D) -> void:
 			exam_hall_menu.menu_closed.connect(_on_menu_closed)
 	if exam_hall_menu:
 		exam_hall_menu.open_exam(p)
+
+
+func _open_danfo_game(p: CharacterBody3D) -> void:
+	if not danfo_game and menus_layer:
+		danfo_game = DanfoGameScene.instantiate()
+		menus_layer.add_child(danfo_game)
+		if danfo_game.has_signal("game_closed"):
+			danfo_game.game_closed.connect(func(_earnings: int):
+				_on_menu_closed()
+			)
+	if danfo_game and danfo_game.has_method("open_danfo_route"):
+		if player:
+			player.set_physics_process(false)
+			player.velocity = Vector3.ZERO
+		danfo_game.open_danfo_route(p if p else player)
 
 
 func _on_npc_dialogue_requested(npc: NPC3D, p: CharacterBody3D) -> void:

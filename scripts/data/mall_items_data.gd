@@ -101,6 +101,38 @@ const ITEMS: Array[Dictionary] = [
 		"category": "upgrade",
 		"icon": "📻",
 		"description": "Plays soothing hostel music tunes to clear exam stress and boost student happiness."
+	},
+	{
+		"id": "double_bookshelf",
+		"name": "Double-Deck Solid Wood Bookshelf",
+		"price": 7000,
+		"category": "upgrade",
+		"icon": "📚",
+		"description": "Stores past questions and heavy textbooks. Grants +25% Study Focus and doubles exam revision speed."
+	},
+	{
+		"id": "campus_wall_poster",
+		"name": "Panoramic Campus Map & Scripture Poster",
+		"price": 2000,
+		"category": "upgrade",
+		"icon": "🗺️",
+		"description": "Features campus landmarks and inspiring Bible verses (+15 Daily Faith & Study Morale)."
+	},
+	{
+		"id": "orthopedic_mattress",
+		"name": "Mouka Foam Orthopedic Bunk Mattress",
+		"price": 11000,
+		"category": "upgrade",
+		"icon": "🛏️",
+		"description": "Replaces thin hostel bunk foam with luxury orthopedic support. Sleep restores energy 2x faster."
+	},
+	{
+		"id": "executive_desk_chair",
+		"name": "Ergonomic High-Back Swivel Desk Chair",
+		"price": 5500,
+		"category": "upgrade",
+		"icon": "🪑",
+		"description": "Lumbar support for long study nights. Reduces study energy drain by -30%."
 	}
 ]
 
