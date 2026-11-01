@@ -14,71 +14,22 @@ Connect Google OAuth credentials so players can sign in with one tap using their
 3. Add https://mycampuslife.vercel.app and http://localhost:8000 under Authorized JavaScript Origins.
 4. Add https://qissxomdrgimimkedwpy.supabase.co/auth/v1/callback under Authorized Redirect URIs.
 5. Copy the Client ID and Client Secret into the Supabase Dashboard under Authentication Providers Google.
-6. Test in web shell html that clicking the Google button signs the user in and restores their cloud profile.
+6. Test in web shell that clicking the Google button signs the user in and restores their cloud profile.
 
 ---
 
-## Task 2: Student Entrepreneurship and Freelance Creative Agency
-### What Needs to be Done
-Allow students to earn honest income through creative talents like graphic design, laptop coding, photography, baking, and academic tutoring.
-
-### How to Do It
-1. In campus gigs menu gd, expand the Student Union Building work stations.
-2. Add interactive mini tasks:
-   - Graphic Design Station: Design flyers for campus conferences to earn 2,500 Naira.
-   - Code Bug Bounty: Fix software bugs at Silicon Lagoon Tech Hub to earn 3,500 Naira.
-   - Handout Printing Hustle: Fast typing and printing of past questions for freshers to earn 1,800 Naira.
-   - Peer Tutoring: Teach junior 100L students before exams to earn 2,000 Naira and raise academic reputation.
-
----
-
-## Task 3: Hostel Room Customization and Study Hub
+## Task 2: Hostel Room Customization and Study Hub
 ### What Needs to be Done
 Allow players to personalize their hostel room with useful furniture, study lamps, bookshelves, and home decor.
 
 ### How to Do It
-1. In mall items data gd, add new placeable room items: Study Lamp, Double Deck Bookshelf, QASA Standing Fan, Ergonomic Desk Chair, and Campus Map Wall Poster.
+1. In mall items data gd, add new placeable room items such as Study Lamp, Double Deck Bookshelf, QASA Standing Fan, Ergonomic Desk Chair, and Campus Map Wall Poster.
 2. In base room gd, save owned furniture in student profile and display them in the hostel room upon entry.
 3. High level study furniture grants passive study focus buffs, speeding up exam preparation.
 
 ---
 
-## Task 4: Dean Cup Faculty Football Championship
-### What Needs to be Done
-Expand the newly renovated football stadium with a full tournament mode where faculties compete for the championship trophy with zero gambling.
-
-### How to Do It
-1. In stadium room gd, connect the interactive football and goalposts into a 5 round penalty shootout challenge against Goalkeeper Emeka.
-2. Players aim shots at corners using power meters for pure skill and fun.
-3. Scoring goals earns the Faculty Gold Cup trophy and celebratory crowd cheers with zero monetary wagering.
-4. Add athletic 400m sprint timing laps on the track to train student stamina.
-
----
-
-## Task 5: WhatsApp and Social Shareable Student Life Card
-### What Needs to be Done
-Add a 1 tap phone button that generates a clean, shareable student ID badge card summarizing your student achievements and avatar drip.
-
-### How to Do It
-1. In web shell html, build an HTML canvas renderer styled like a modern university student ID card.
-2. Include student name, department, CGPA grade, 3D avatar picture, and a wholesome personality title like First Class Scholar, Campus Athlete, Master Baker, or Fellowship Leader.
-3. Connect the browser Web Share API so the player can share the badge image directly to WhatsApp Status or download it to their phone gallery.
-
----
-
-## Task 6: In-Game Settings and Direct Player Feedback
-### What Needs to be Done
-Add a comprehensive settings menu with audio controls, performance toggles, and a direct bug feedback box.
-
-### How to Do It
-1. In scenes hud tscn and phone system gd, add an easy to reach Settings button.
-2. Include volume sliders for Master, Background Music, and Sound Effects.
-3. Include camera view switcher for Top View, Classic Angle, and 3D Perspective.
-4. Include a Send Feedback box that writes user comments, ratings, and device model straight into the Supabase campus user feedback table.
-
----
-
-## Task 7: Driveable Campus Danfo Bus and Keke Shuttle
+## Task 3: Driveable Campus Danfo Bus and Keke Shuttle
 ### What Needs to be Done
 Let players drive the yellow Danfo bus or tricycle Keke around the campus ring road to transport students between faculties.
 

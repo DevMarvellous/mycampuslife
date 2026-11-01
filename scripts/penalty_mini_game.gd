@@ -2,19 +2,26 @@ class_name PenaltyMiniGame
 extends Control
 
 ## Interactive 3D Stadium Penalty Shootout Mini-Game for the Dean's Cup.
-## Players select tactical strike corners, adjust power, choose match stakes,
-## and battle the Faculty Goalkeeper with realistic goal/save outcomes.
+## Players select tactical strike corners, adjust shot power, and battle the Faculty
+## Goalkeeper across authentic tournament rounds with zero gambling/wagering.
 
 signal penalty_taken(corner: String, power: float, stake: int, is_goal: bool, payout: int)
 signal dialog_closed
 
 var current_player: CharacterBody3D = null
 var selected_corner: String = "top_left"
+var tournament_mode: String = "5_shot" # "5_shot", "final_3", "sudden_death"
 var selected_stake: int = 0
 var power: float = 60.0
 var is_charging: bool = true
 var charge_dir: float = 1.0
 var is_striking: bool = false
+
+# Tournament progress
+var current_shot: int = 1
+var max_shots: int = 5
+var goals_scored: int = 0
+var tournament_won: bool = false
 
 # UI references
 @onready var status_label: Label = %StatusLabel if has_node("%StatusLabel") else null
@@ -31,7 +38,7 @@ var is_striking: bool = false
 @onready var btn_br: Button = %BtnBottomRight if has_node("%BtnBottomRight") else null
 @onready var btn_panenka: Button = %BtnPanenka if has_node("%BtnPanenka") else null
 
-# Stake buttons
+# Mode buttons (previously stake buttons, repurposed safely for tournament modes)
 @onready var btn_stake_0: Button = %BtnStake0 if has_node("%BtnStake0") else null
 @onready var btn_stake_500: Button = %BtnStake500 if has_node("%BtnStake500") else null
 @onready var btn_stake_1500: Button = %BtnStake1500 if has_node("%BtnStake1500") else null
@@ -41,7 +48,7 @@ func _ready() -> void:
 	visible = false
 	_bind_buttons()
 	_update_corner_buttons_visuals()
-	_update_stake_buttons_visuals()
+	_update_mode_buttons_visuals()
 
 
 func _bind_buttons() -> void:
@@ -52,9 +59,15 @@ func _bind_buttons() -> void:
 	if btn_panenka: btn_panenka.pressed.connect(func(): _select_corner("panenka_center"))
 	if btn_br: btn_br.pressed.connect(func(): _select_corner("bottom_right"))
 
-	if btn_stake_0: btn_stake_0.pressed.connect(func(): _select_stake(0))
-	if btn_stake_500: btn_stake_500.pressed.connect(func(): _select_stake(500))
-	if btn_stake_1500: btn_stake_1500.pressed.connect(func(): _select_stake(1500))
+	if btn_stake_0:
+		btn_stake_0.text = "🏆 5-Shot Dean's Cup"
+		btn_stake_0.pressed.connect(func(): _select_mode("5_shot", 5))
+	if btn_stake_500:
+		btn_stake_500.text = "🥇 3-Shot Final"
+		btn_stake_500.pressed.connect(func(): _select_mode("final_3", 3))
+	if btn_stake_1500:
+		btn_stake_1500.text = "⚡ Golden Boot"
+		btn_stake_1500.pressed.connect(func(): _select_mode("sudden_death", 1))
 
 	if strike_btn: strike_btn.pressed.connect(strike)
 	if exit_btn: exit_btn.pressed.connect(close_dialog)
@@ -66,7 +79,7 @@ func _process(delta: float) -> void:
 
 	# Oscillate shot power meter
 	if is_charging:
-		power += charge_dir * delta * 80.0
+		power += charge_dir * delta * 85.0
 		if power >= 100.0:
 			power = 100.0
 			charge_dir = -1.0
@@ -84,11 +97,16 @@ func open_penalty(player: CharacterBody3D) -> void:
 	is_charging = true
 	power = 60.0
 	charge_dir = 1.0
+	current_shot = 1
+	goals_scored = 0
+	tournament_won = false
+
 	if status_label:
-		status_label.text = "🎯 Pick your target corner, match stake, and time your strike power!"
+		status_label.text = "⚽ Shot %d/%d • Goals: %d • Aim for corners & time power!" % [current_shot, max_shots, goals_scored]
 		status_label.add_theme_color_override(&"font_color", Color(0.35, 0.95, 0.65))
+
 	_update_corner_buttons_visuals()
-	_update_stake_buttons_visuals()
+	_update_mode_buttons_visuals()
 	visible = true
 
 
@@ -101,15 +119,28 @@ func close_dialog() -> void:
 func _select_corner(corner: String) -> void:
 	selected_corner = corner
 	_update_corner_buttons_visuals()
-	if SoundManager:
-		SoundManager.play_click()
+	if SoundManager: SoundManager.play_click()
 
 
 func _select_stake(stake: int) -> void:
 	selected_stake = stake
-	_update_stake_buttons_visuals()
-	if SoundManager:
-		SoundManager.play_click()
+	if stake == 0:
+		_select_mode("5_shot", 5)
+	elif stake == 500:
+		_select_mode("final_3", 3)
+	else:
+		_select_mode("sudden_death", 1)
+
+
+func _select_mode(mode: String, shots: int) -> void:
+	tournament_mode = mode
+	max_shots = shots
+	current_shot = 1
+	goals_scored = 0
+	_update_mode_buttons_visuals()
+	if SoundManager: SoundManager.play_click()
+	if status_label:
+		status_label.text = "Mode Selected: %s (%d shots)! Aim corner and shoot!" % [mode.replace("_", " ").to_upper(), max_shots]
 
 
 func _update_corner_buttons_visuals() -> void:
@@ -143,62 +174,36 @@ func _get_corner_label(corner: String) -> String:
 		_: return corner
 
 
-func _update_stake_buttons_visuals() -> void:
+func _update_mode_buttons_visuals() -> void:
 	if btn_stake_0:
-		btn_stake_0.add_theme_color_override(&"font_color", Color(0.4, 1.0, 0.5) if selected_stake == 0 else Color(0.8, 0.8, 0.8))
+		btn_stake_0.add_theme_color_override(&"font_color", Color(0.3, 0.95, 0.55) if tournament_mode == "5_shot" else Color(0.8, 0.8, 0.8))
 	if btn_stake_500:
-		btn_stake_500.add_theme_color_override(&"font_color", Color(1.0, 0.85, 0.2) if selected_stake == 500 else Color(0.8, 0.8, 0.8))
+		btn_stake_500.add_theme_color_override(&"font_color", Color(1.0, 0.85, 0.2) if tournament_mode == "final_3" else Color(0.8, 0.8, 0.8))
 	if btn_stake_1500:
-		btn_stake_1500.add_theme_color_override(&"font_color", Color(1.0, 0.45, 0.45) if selected_stake == 1500 else Color(0.8, 0.8, 0.8))
+		btn_stake_1500.add_theme_color_override(&"font_color", Color(0.4, 0.85, 1.0) if tournament_mode == "sudden_death" else Color(0.8, 0.8, 0.8))
 
 	if stake_info_label:
-		if selected_stake == 0:
-			stake_info_label.text = "Stake: Free Practice • Payout: ₦500 Athletic Bonus on Goal"
-		elif selected_stake == 500:
-			stake_info_label.text = "Stake: ₦500 Campus League • Payout: ₦1,000 Cash on Goal"
-		else:
-			stake_info_label.text = "Stake: ₦1,500 Dean's Cup Final • Payout: ₦3,000 Cash + Championship Glory!"
+		stake_info_label.text = "🏆 Pure Athletic Tournament • Zero Gambling • Dean's Cup Gold Trophy & Grant on Victory!"
 
 
 func strike() -> void:
 	if is_striking:
 		return
 
-	# Validate funds if stake > 0
-	if current_player and selected_stake > 0:
-		var needs: NeedsManager = current_player.get_node_or_null("NeedsManager") as NeedsManager
-		if needs and needs.money < selected_stake:
-			if status_label:
-				status_label.text = "⚠️ Sapa Alert! You need ₦%d to enter this match stake!" % selected_stake
-				status_label.add_theme_color_override(&"font_color", Color(1.0, 0.35, 0.35))
-			if SoundManager:
-				SoundManager.play_alert()
-			return
-
 	is_striking = true
 	is_charging = false
 
-	# Deduct stake if applicable
-	if current_player and selected_stake > 0:
-		var needs: NeedsManager = current_player.get_node_or_null("NeedsManager") as NeedsManager
-		if needs:
-			needs.modify_money(-selected_stake)
+	TimeSystem.advance_minutes(5)
 
-	TimeSystem.advance_minutes(15)
-
-	# Trigger player animation & sound
 	if current_player and current_player.has_method("play_penalty_kick_animation"):
 		current_player.play_penalty_kick_animation()
 	if SoundManager:
 		SoundManager.play_whistle()
 
-	# Evaluate Goalkeeper AI & Shot Physics
 	var shot_power = power
 	var target_corner = selected_corner
 
-	# Goalkeeper dive possibilities
 	var dive_options = ["top_left", "roof_center", "top_right", "bottom_left", "panenka_center", "bottom_right"]
-	# Random dive choice
 	var gk_dive = dive_options[randi() % dive_options.size()]
 
 	var is_goal: bool = false
@@ -206,69 +211,75 @@ func strike() -> void:
 	var payout: int = 0
 
 	if shot_power > 92.0:
-		# Overhit! Blasted into the stands
 		is_goal = false
-		outcome_msg = "💨 OVER THE CROSSBAR! Shot power was %.0f%% — ball sailed high into the hostel fence!" % shot_power
-		if SoundManager:
-			SoundManager.play_alert()
+		outcome_msg = "💨 OVER THE CROSSBAR! Shot was %.0f%% power — sailed over stadium fence!" % shot_power
+		if SoundManager: SoundManager.play_alert()
 	elif shot_power < 30.0:
-		# Weak scuffed shot
 		is_goal = false
-		outcome_msg = "🧤 WEAK EFFORT! Scuffed at %.0f%% power. Goalkeeper easily scooped it up." % shot_power
-		if SoundManager:
-			SoundManager.play_alert()
+		outcome_msg = "🧤 WEAK SHOT! Scuffed at %.0f%% power. Goalkeeper easily caught it." % shot_power
+		if SoundManager: SoundManager.play_alert()
 	elif gk_dive == target_corner:
-		# Saved by Goalkeeper!
 		is_goal = false
-		outcome_msg = "🧤 WORLD-CLASS SAVE! Goalkeeper dived right into %s and tipped it wide!" % _get_corner_label(target_corner)
-		if SoundManager:
-			SoundManager.play_alert()
+		outcome_msg = "🧤 DIVE SAVE! Keeper dived to %s and pushed it wide!" % _get_corner_label(target_corner)
+		if SoundManager: SoundManager.play_alert()
 	else:
-		# GOAL!
 		is_goal = true
-		if selected_stake == 0:
-			payout = 500
-		elif selected_stake == 500:
-			payout = 1000
-		else:
-			payout = 3000
-
-		outcome_msg = "⚽ GOOOAAAL! Curled cleanly into %s! Keeper dived %s! Won +₦%d!" % [
+		goals_scored += 1
+		payout = 800
+		outcome_msg = "⚽ GOOOAAAL! Curled cleanly into %s! (Shot %d/%d • Goals: %d)" % [
 			_get_corner_label(target_corner),
-			_get_corner_label(gk_dive),
-			payout
+			current_shot,
+			max_shots,
+			goals_scored
 		]
-
 		if SoundManager:
 			SoundManager.play_cheer()
 			SoundManager.play_coin()
 
-	# Apply rewards
+	# Process tournament completion
+	var is_final_shot: bool = (current_shot >= max_shots)
+
 	if current_player:
 		var needs: NeedsManager = current_player.get_node_or_null("NeedsManager") as NeedsManager
 		if needs:
 			if is_goal:
 				needs.modify_money(payout)
-				needs.modify_faith(20.0)
+				needs.modify_faith(15.0)
 				needs.modify_energy(15.0)
 			else:
-				needs.modify_energy(10.0)
+				needs.modify_energy(5.0)
 
-		if is_goal and current_player.has_method("play_celebrate_animation"):
+			if is_final_shot:
+				var min_goals_to_win = 3 if max_shots == 5 else (2 if max_shots == 3 else 1)
+				if goals_scored >= min_goals_to_win:
+					tournament_won = true
+					var grand_prize: int = 3500
+					needs.modify_money(grand_prize)
+					needs.modify_faith(30.0)
+					needs.modify_energy(30.0)
+					outcome_msg = "🏆 DEAN'S CUP CHAMPIONS! Scored %d/%d goals! Awarded Dean's Athletic Grant (+₦%d) & Gold Cup!" % [goals_scored, max_shots, grand_prize]
+					if SoundManager: SoundManager.play_cheer()
+					if current_player.has_method("play_celebrate_animation"):
+						current_player.play_celebrate_animation("🏆 DEAN'S CUP WINNER! +₦%d" % grand_prize)
+
+		if is_goal and not is_final_shot and current_player.has_method("play_celebrate_animation"):
 			current_player.play_celebrate_animation("⚽ GOAL! +₦%d" % payout)
 
-		# Advance Task 6 (Penalty Goal) if quest active
 		PropBuilder3D.advance_quest_if_matching(5, current_player)
 
 	if status_label:
 		status_label.text = outcome_msg
 		status_label.add_theme_color_override(&"font_color", Color(0.3, 0.98, 0.5) if is_goal else Color(1.0, 0.7, 0.3))
 
-	penalty_taken.emit(target_corner, shot_power, selected_stake, is_goal, payout)
+	penalty_taken.emit(target_corner, shot_power, 0, is_goal, payout)
 
-	# Re-enable striking after brief timeout
+	current_shot += 1
+	if current_shot > max_shots:
+		# Reset for next session
+		current_shot = 1
+		goals_scored = 0
+
 	get_tree().create_timer(1.8).timeout.connect(func():
 		is_striking = false
 		is_charging = true
 	)
-

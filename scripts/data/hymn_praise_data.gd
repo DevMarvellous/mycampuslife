@@ -130,3 +130,4 @@ static func get_song_by_index(idx: int) -> Dictionary:
 
 static func get_song_count() -> int:
 	return PRAISE_SONGS.size()
+

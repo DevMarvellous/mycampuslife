@@ -88,7 +88,7 @@ theme_override_constants/separation = 4
 [node name="StakeHeader" type="Label" parent="ModalPanel/VBox/StakeSection"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
-text = "Select Match Stake:"
+text = "Select Tournament Challenge:"
 
 [node name="StakeButtonsRow" type="HBoxContainer" parent="ModalPanel/VBox/StakeSection"]
 layout_mode = 2
@@ -99,31 +99,31 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 13
-text = "🟢 Practice (₦0)"
+theme_override_font_sizes/font_size = 12
+text = "🏆 5-Shot Dean's Cup"
 
 [node name="BtnStake500" type="Button" parent="ModalPanel/VBox/StakeSection/StakeButtonsRow"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 13
-text = "🟡 League (₦500)"
+theme_override_font_sizes/font_size = 12
+text = "🥇 3-Shot Final"
 
 [node name="BtnStake1500" type="Button" parent="ModalPanel/VBox/StakeSection/StakeButtonsRow"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 13
-text = "🔴 Final (₦1,500)"
+theme_override_font_sizes/font_size = 12
+text = "⚡ Golden Boot"
 
 [node name="StakeInfoLabel" type="Label" parent="ModalPanel/VBox/StakeSection"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.85, 0.9, 1)
 theme_override_font_sizes/font_size = 11
-text = "Stake: Free Practice • Payout: ₦500 Athletic Bonus on Goal"
+text = "🏆 Pure Athletic Tournament • Zero Gambling • Dean's Cup Trophy on Victory!"
 horizontal_alignment = 1
 
 [node name="CornersSection" type="VBoxContainer" parent="ModalPanel/VBox"]

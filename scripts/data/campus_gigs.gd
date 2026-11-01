@@ -6,6 +6,54 @@ extends RefCounted
 
 const GIGS: Array[Dictionary] = [
 	{
+		"id": "graphic_design",
+		"title": "SUB Graphic Design Studio",
+		"location": "Student Union Building",
+		"payout": 2500,
+		"energy_cost": 18.0,
+		"duration_minutes": 35,
+		"min_cgpa": 0.0,
+		"icon": "🎨",
+		"desc": "Design publicity flyers and social media banners for campus conferences and academic summits.",
+		"is_interactive": true
+	},
+	{
+		"id": "code_bounty",
+		"title": "Silicon Lagoon Bug Bounty",
+		"location": "Silicon Lagoon Tech Hub",
+		"payout": 3500,
+		"energy_cost": 22.0,
+		"duration_minutes": 40,
+		"min_cgpa": 2.50,
+		"icon": "💻",
+		"desc": "Debug student portal scripts and fix software glitches for the university computer society.",
+		"is_interactive": true
+	},
+	{
+		"id": "handout_printing",
+		"title": "Cybercafe Handout Fast Printing",
+		"location": "Cybercafe & Business Center",
+		"payout": 1800,
+		"energy_cost": 15.0,
+		"duration_minutes": 25,
+		"min_cgpa": 0.0,
+		"icon": "🖨️",
+		"desc": "Fast typing, photocopying, and spiral-binding 100L past question booklets for freshers.",
+		"is_interactive": true
+	},
+	{
+		"id": "peer_tutoring",
+		"title": "100L Freshers Peer Tutoring",
+		"location": "Lecture Theatre Tutorial Room",
+		"payout": 2000,
+		"energy_cost": 20.0,
+		"duration_minutes": 45,
+		"min_cgpa": 3.00,
+		"icon": "📚",
+		"desc": "Teach junior 100L students core course fundamentals before semester exams to boost CGPA.",
+		"is_interactive": true
+	},
+	{
 		"id": "project_typing",
 		"title": "Type & Bind Student Project",
 		"location": "Library / Cybercafe",
@@ -13,8 +61,9 @@ const GIGS: Array[Dictionary] = [
 		"energy_cost": 20.0,
 		"duration_minutes": 45,
 		"min_cgpa": 0.0,
-		"icon": "💻",
-		"desc": "Format and spiral-bind a 40-page final year project report for a graduating senior."
+		"icon": "📄",
+		"desc": "Format and spiral-bind a 40-page final year project report for a graduating senior.",
+		"is_interactive": false
 	},
 	{
 		"id": "phone_repair",
@@ -25,7 +74,8 @@ const GIGS: Array[Dictionary] = [
 		"duration_minutes": 50,
 		"min_cgpa": 0.0,
 		"icon": "🔧",
-		"desc": "Replace a cracked Android LCD screen and clean the charging port for a coursemate."
+		"desc": "Replace a cracked Android LCD screen and clean the charging port for a coursemate.",
+		"is_interactive": false
 	},
 	{
 		"id": "food_delivery",
@@ -36,7 +86,8 @@ const GIGS: Array[Dictionary] = [
 		"duration_minutes": 30,
 		"min_cgpa": 0.0,
 		"icon": "🍲",
-		"desc": "Deliver 3 takeaway packs of hot jollof rice and fried fish to Moremi Hall hostel."
+		"desc": "Deliver 3 takeaway packs of hot jollof rice and fried fish to Moremi Hall hostel.",
+		"is_interactive": false
 	},
 	{
 		"id": "hostel_laundry",
@@ -47,18 +98,20 @@ const GIGS: Array[Dictionary] = [
 		"duration_minutes": 45,
 		"min_cgpa": 0.0,
 		"icon": "🧺",
-		"desc": "Hand-wash and hang 2 buckets of jeans and shirts using morning borehole water."
+		"desc": "Hand-wash and hang 2 buckets of jeans and shirts using morning borehole water.",
+		"is_interactive": false
 	},
 	{
 		"id": "math_tutoring",
-		"title": "100L Calculus & Physics Tutorial",
+		"title": "Calculus & Engineering Tutorial",
 		"location": "Lecture Theatre 2",
 		"payout": 5000,
 		"energy_cost": 22.0,
 		"duration_minutes": 60,
 		"min_cgpa": 3.50,
 		"icon": "📐",
-		"desc": "Organize a 1-hour tutorial explaining derivatives and vectors to junior students. (Requires CGPA >= 3.50)"
+		"desc": "Organize a 1-hour advanced calculus tutorial. (Requires CGPA >= 3.50)",
+		"is_interactive": false
 	},
 	{
 		"id": "event_dj",
@@ -69,7 +122,8 @@ const GIGS: Array[Dictionary] = [
 		"duration_minutes": 75,
 		"min_cgpa": 0.0,
 		"icon": "🎧",
-		"desc": "Help connect amplifiers and control the DJ mixer during the evening campus awards night."
+		"desc": "Help connect amplifiers and control the audio mixer during campus awards evening.",
+		"is_interactive": false
 	}
 ]
 

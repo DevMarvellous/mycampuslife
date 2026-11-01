@@ -931,6 +931,125 @@ html, body, #canvas {
 		</div>
 	</div>
 
+	<!-- 2F. Native HTML Game & Graphics Settings Modal -->
+	<div id="native-settings-overlay" style="position:fixed; top:0; left:0; right:0; bottom:0; z-index:80; background:rgba(0,0,0,0.72); display:none; align-items:center; justify-content:center; padding:16px; backdrop-filter:blur(8px);" onclick="if(event.target===this)closeNativeCampusSettings()">
+		<div style="background:rgba(10,20,16,0.98); border:2px solid #34d399; border-radius:18px; width:100%; max-width:440px; max-height:88vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 16px 48px rgba(0,0,0,0.9);">
+			<div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid rgba(52,211,153,0.3); background:rgba(16,42,30,0.95);">
+				<strong style="color:#34d399; font-size:15px;">⚙️ CAMPUS GAME &amp; GRAPHICS SETTINGS</strong>
+				<button type="button" onclick="closeNativeCampusSettings()" style="background:transparent; border:none; color:#cbd5e1; font-size:20px; cursor:pointer;">✕</button>
+			</div>
+			<div style="padding:16px; overflow-y:auto; display:flex; flex-direction:column; gap:14px; color:#f1f5f9;">
+				<div id="settings-profile-info" style="font-size:12px; color:#38bdf8; font-weight:700; background:rgba(15,23,42,0.6); padding:8px 12px; border-radius:8px; border:1px solid rgba(56,189,248,0.3);">
+					Student Profile Info
+				</div>
+				<div>
+					<label style="font-size:12px; color:#94a3b8; font-weight:700; display:block; margin-bottom:6px;">GRAPHICS QUALITY (LAG &amp; BATTERY OPTIMIZER):</label>
+					<div style="display:flex; gap:8px;">
+						<button type="button" id="gfx-low-btn" class="chip-btn" style="flex:1; padding:8px;" onclick="setGraphicsQuality('low')">⚡ Low (60 FPS)</button>
+						<button type="button" id="gfx-balanced-btn" class="chip-btn active" style="flex:1; padding:8px;" onclick="setGraphicsQuality('balanced')">⚖️ Balanced</button>
+						<button type="button" id="gfx-high-btn" class="chip-btn" style="flex:1; padding:8px;" onclick="setGraphicsQuality('high')">✨ High Drip</button>
+					</div>
+				</div>
+				<div>
+					<label style="font-size:12px; color:#94a3b8; font-weight:700; display:block; margin-bottom:6px;">CAMERA ANGLE PERSPECTIVE:</label>
+					<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+						<button type="button" id="cam-preset-0" class="chip-btn" style="padding:8px;" onclick="setCameraPreset(0)">📷 Top View</button>
+						<button type="button" id="cam-preset-1" class="chip-btn" style="padding:8px;" onclick="setCameraPreset(1)">📸 Classic Angle</button>
+						<button type="button" id="cam-preset-2" class="chip-btn" style="padding:8px;" onclick="setCameraPreset(2)">🎥 3D Perspective</button>
+						<button type="button" id="cam-preset-3" class="chip-btn" style="padding:8px;" onclick="setCameraPreset(3)">🔍 Close Follow</button>
+					</div>
+				</div>
+				<div>
+					<label style="font-size:12px; color:#94a3b8; font-weight:700; display:block; margin-bottom:6px;">AUDIO VOLUME CONTROLS:</label>
+					<div style="display:flex; flex-direction:column; gap:8px;">
+						<div style="display:flex; align-items:center; gap:8px; font-size:12px;">
+							<span style="width:70px;">Master:</span>
+							<input id="vol-master-slider" type="range" min="0" max="100" value="90" style="flex:1;" oninput="setAudioBusVolume('master', this.value)" />
+						</div>
+						<div style="display:flex; align-items:center; gap:8px; font-size:12px;">
+							<span style="width:70px;">Music:</span>
+							<input id="vol-music-slider" type="range" min="0" max="100" value="80" style="flex:1;" oninput="setAudioBusVolume('music', this.value)" />
+						</div>
+						<div style="display:flex; align-items:center; gap:8px; font-size:12px;">
+							<span style="width:70px;">SFX:</span>
+							<input id="vol-sfx-slider" type="range" min="0" max="100" value="90" style="flex:1;" oninput="setAudioBusVolume('sfx', this.value)" />
+						</div>
+					</div>
+				</div>
+				<div style="display:flex; gap:8px; margin-top:6px;">
+					<button type="button" class="btn-secondary" style="height:40px; flex:1;" onclick="switchCampusAccount()">🔄 Switch Student Account</button>
+					<button type="button" class="btn-primary" style="height:40px; flex:1;" onclick="closeNativeCampusSettings()">Done ✓</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 2G. Native HTML SUG Senate Feedback Modal -->
+	<div id="native-feedback-overlay" style="position:fixed; top:0; left:0; right:0; bottom:0; z-index:80; background:rgba(0,0,0,0.72); display:none; align-items:center; justify-content:center; padding:16px; backdrop-filter:blur(8px);" onclick="if(event.target===this)closeNativeCampusFeedback()">
+		<div style="background:rgba(10,20,16,0.98); border:2px solid #f5c518; border-radius:18px; width:100%; max-width:440px; max-height:88vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 16px 48px rgba(0,0,0,0.9);">
+			<div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid rgba(245,197,24,0.3); background:rgba(28,24,12,0.95);">
+				<strong style="color:#f5c518; font-size:15px;">💬 SUG SENATE &amp; DEV FEEDBACK MEMO</strong>
+				<button type="button" onclick="closeNativeCampusFeedback()" style="background:transparent; border:none; color:#cbd5e1; font-size:20px; cursor:pointer;">✕</button>
+			</div>
+			<div style="padding:16px; overflow-y:auto; display:flex; flex-direction:column; gap:12px; color:#f1f5f9;">
+				<div style="font-size:12px; color:#cbd5e1; line-height:1.4;">
+					Have an idea, found a bug, or want a new campus landmark? Send your memo directly to the Student Union &amp; Dev Team!
+				</div>
+				<div>
+					<label style="font-size:12px; color:#94a3b8; font-weight:700; display:block; margin-bottom:6px;">STAR RATING:</label>
+					<div style="font-size:24px; cursor:pointer; letter-spacing:4px;" id="feedback-stars-row">
+						<span id="star-1" onclick="setFeedbackRating(1)">★</span>
+						<span id="star-2" onclick="setFeedbackRating(2)">★</span>
+						<span id="star-3" onclick="setFeedbackRating(3)">★</span>
+						<span id="star-4" onclick="setFeedbackRating(4)">★</span>
+						<span id="star-5" onclick="setFeedbackRating(5)">★</span>
+					</div>
+				</div>
+				<div>
+					<label style="font-size:12px; color:#94a3b8; font-weight:700; display:block; margin-bottom:6px;">MEMO CATEGORY:</label>
+					<div style="display:flex; gap:6px; flex-wrap:wrap;">
+						<button type="button" id="fb-cat-bug" class="chip-btn active" style="padding:6px 12px; font-size:11px;" onclick="setFeedbackCategory('bug')">🐛 Bug</button>
+						<button type="button" id="fb-cat-gameplay" class="chip-btn" style="padding:6px 12px; font-size:11px;" onclick="setFeedbackCategory('gameplay')">🎮 Gameplay</button>
+						<button type="button" id="fb-cat-performance" class="chip-btn" style="padding:6px 12px; font-size:11px;" onclick="setFeedbackCategory('performance')">⚡ Performance</button>
+						<button type="button" id="fb-cat-suggestion" class="chip-btn" style="padding:6px 12px; font-size:11px;" onclick="setFeedbackCategory('suggestion')">💡 Idea</button>
+						<button type="button" id="fb-cat-other" class="chip-btn" style="padding:6px 12px; font-size:11px;" onclick="setFeedbackCategory('other')">📋 Other</button>
+					</div>
+				</div>
+				<div>
+					<label for="feedback-text-input" style="font-size:12px; color:#94a3b8; font-weight:700; display:block; margin-bottom:6px;">YOUR MEMO / MESSAGE:</label>
+					<textarea id="feedback-text-input" class="portal-input" rows="4" style="height:90px; resize:none; padding:10px; font-size:13px;" placeholder="Describe what you experienced or what feature you want added..."></textarea>
+				</div>
+				<div id="feedback-status-msg" style="font-size:12px; min-height:18px;"></div>
+				<div style="display:flex; gap:8px; margin-top:4px;">
+					<button type="button" class="btn-secondary" style="height:42px; flex:1;" onclick="closeNativeCampusFeedback()">Cancel</button>
+					<button type="button" class="btn-primary" style="height:42px; flex:1;" onclick="submitNativeCampusFeedback()">Submit Memo 📨</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 2H. Native HTML WhatsApp & Social Shareable Student ID Badge Modal -->
+	<div id="native-idcard-share-overlay" style="position:fixed; top:0; left:0; right:0; bottom:0; z-index:85; background:rgba(0,0,0,0.78); display:none; align-items:center; justify-content:center; padding:14px; backdrop-filter:blur(8px);" onclick="if(event.target===this)closeStudentCardShareModal()">
+		<div style="background:rgba(10,22,18,0.98); border:2px solid #34d399; border-radius:18px; width:100%; max-width:440px; max-height:92vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 18px 50px rgba(0,0,0,0.95);">
+			<div style="display:flex; justify-content:space-between; align-items:center; padding:12px 18px; border-bottom:1px solid rgba(52,211,153,0.3); background:rgba(16,42,30,0.95);">
+				<strong style="color:#34d399; font-size:14px;">🎓 OFFICIAL STUDENT ID PASS</strong>
+				<button type="button" onclick="closeStudentCardShareModal()" style="background:transparent; border:none; color:#cbd5e1; font-size:20px; cursor:pointer;">✕</button>
+			</div>
+			<div style="padding:14px; overflow-y:auto; display:flex; flex-direction:column; align-items:center; gap:12px;">
+				<canvas id="student-id-card-canvas" width="600" height="900" style="width:100%; max-width:340px; border-radius:12px; box-shadow:0 8px 30px rgba(0,0,0,0.8);"></canvas>
+				<div style="display:flex; flex-direction:column; width:100%; gap:8px;">
+					<button type="button" class="btn-primary" style="height:44px; background:linear-gradient(135deg, #25d366, #128c7e); border:none; color:#ffffff; font-weight:800; cursor:pointer;" onclick="shareStudentCardToWhatsApp()">
+						📲 Share to WhatsApp Status
+					</button>
+					<div style="display:flex; gap:8px;">
+						<button type="button" class="btn-secondary" style="height:40px; flex:1;" onclick="downloadStudentCardPNG()">💾 Save PNG</button>
+						<button type="button" class="btn-secondary" style="height:40px; flex:1;" onclick="copyStudentCardSummary()">📋 Copy Text</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<!-- 4. Supabase Cloud Database Setup Modal -->
 	<div id="cloud-db-overlay" style="position:fixed; top:0; left:0; right:0; bottom:0; z-index:85; background:rgba(0,0,0,0.72); display:none; align-items:center; justify-content:center; padding:16px; backdrop-filter:blur(8px);">
 		<div style="background:rgba(10,22,16,0.98); border:2px solid #f5c518; border-radius:18px; width:95%; max-width:460px; padding:20px; box-shadow:0 16px 48px rgba(0,0,0,0.9); color:#f8fafc;">
@@ -987,7 +1106,7 @@ html, body, #canvas {
 	}, true);
 })();
 
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":4695368,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":4712216,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
@@ -2411,6 +2530,259 @@ window.submitNativeCampusFeedback = async function() {
 	}
 	if (txtEl) txtEl.value = '';
 	setTimeout(() => window.closeNativeCampusFeedback(), 1200);
+};
+
+/* =======================================================
+   NATIVE HTML STUDENT ID CARD GENERATOR & WHATSAPP SHARE
+   ======================================================= */
+let _currentCardData = null;
+
+window.openStudentCardShareModal = function(cardJson) {
+	try {
+		if (typeof cardJson === 'string') {
+			_currentCardData = JSON.parse(cardJson);
+		} else if (typeof cardJson === 'object') {
+			_currentCardData = cardJson;
+		}
+	} catch (e) {
+		_currentCardData = null;
+	}
+	if (!_currentCardData) {
+		_currentCardData = {
+			name: (window.ADMISSION_STATE && window.ADMISSION_STATE.name) ? window.ADMISSION_STATE.name : "Student Fresher",
+			username: (window.ADMISSION_STATE && window.ADMISSION_STATE.username) ? window.ADMISSION_STATE.username : "@campus_student",
+			matric_no: "FUCL/2026/" + ((window.ADMISSION_STATE && window.ADMISSION_STATE.dept) ? window.ADMISSION_STATE.dept : "CSC") + "/042",
+			department: (window.ADMISSION_STATE && window.ADMISSION_STATE.dept) ? window.ADMISSION_STATE.dept : "Computer Science",
+			faculty: (window.ADMISSION_STATE && window.ADMISSION_STATE.faculty) ? window.ADMISSION_STATE.faculty : "Faculty of Sciences",
+			cgpa: 4.50,
+			title: "Fellowship Scholar & Tech Innovator",
+			level: "100 Level (Fresher)",
+			status: "VALID ENROLLED UNDERGRADUATE",
+			money: 5000
+		};
+	}
+
+	const modal = document.getElementById('native-idcard-share-overlay');
+	if (modal) modal.style.display = 'flex';
+	renderStudentCardCanvas(_currentCardData);
+};
+
+window.closeStudentCardShareModal = function() {
+	const modal = document.getElementById('native-idcard-share-overlay');
+	if (modal) modal.style.display = 'none';
+};
+
+function renderStudentCardCanvas(data) {
+	const canvas = document.getElementById('student-id-card-canvas');
+	if (!canvas) return;
+	const ctx = canvas.getContext('2d');
+	const W = canvas.width;
+	const H = canvas.height;
+
+	const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+	bgGrad.addColorStop(0, '#061c12');
+	bgGrad.addColorStop(0.5, '#0c2d1e');
+	bgGrad.addColorStop(1, '#05140d');
+	ctx.fillStyle = bgGrad;
+	ctx.fillRect(0, 0, W, H);
+
+	ctx.strokeStyle = '#eab308';
+	ctx.lineWidth = 6;
+	ctx.strokeRect(16, 16, W - 32, H - 32);
+
+	ctx.strokeStyle = '#34d399';
+	ctx.lineWidth = 1.5;
+	ctx.strokeRect(24, 24, W - 48, H - 48);
+
+	ctx.fillStyle = '#103825';
+	ctx.fillRect(26, 26, W - 52, 90);
+	ctx.fillStyle = '#eab308';
+	ctx.fillRect(26, 114, W - 52, 3);
+
+	ctx.textAlign = 'center';
+	ctx.fillStyle = '#fde047';
+	ctx.font = 'bold 20px "Cinzel", "Times New Roman", serif, sans-serif';
+	ctx.fillText('FEDERAL UNIVERSITY OF CAMPUS LIFE', W / 2, 60);
+
+	ctx.fillStyle = '#cbd5e1';
+	ctx.font = '600 12px sans-serif';
+	ctx.fillText('OFFICIAL UNDERGRADUATE IDENTITY CARD • 2025/2026', W / 2, 85);
+
+	const photoX = 50;
+	const photoY = 145;
+	const photoW = 150;
+	const photoH = 180;
+
+	ctx.fillStyle = '#0a1912';
+	ctx.fillRect(photoX, photoY, photoW, photoH);
+	ctx.strokeStyle = '#eab308';
+	ctx.lineWidth = 3;
+	ctx.strokeRect(photoX, photoY, photoW, photoH);
+
+	ctx.font = '72px sans-serif';
+	ctx.fillText('🎓', photoX + photoW / 2, photoY + 110);
+
+	const infoX = 225;
+	ctx.textAlign = 'left';
+
+	ctx.fillStyle = '#94a3b8';
+	ctx.font = 'bold 11px sans-serif';
+	ctx.fillText('FULL NAME', infoX, 165);
+	ctx.fillStyle = '#ffffff';
+	ctx.font = 'bold 20px sans-serif';
+	const sName = (data.name || "Student").toUpperCase();
+	ctx.fillText(sName.length > 20 ? sName.slice(0, 20) + '...' : sName, infoX, 190);
+
+	ctx.fillStyle = '#94a3b8';
+	ctx.font = 'bold 11px sans-serif';
+	ctx.fillText('MATRIC NUMBER', infoX, 220);
+	ctx.fillStyle = '#34d399';
+	ctx.font = 'bold 16px monospace';
+	ctx.fillText(data.matric_no || "FUCL/2026/CSC/042", infoX, 242);
+
+	ctx.fillStyle = '#94a3b8';
+	ctx.font = 'bold 11px sans-serif';
+	ctx.fillText('FACULTY & DEPARTMENT', infoX, 272);
+	ctx.fillStyle = '#e2e8f0';
+	ctx.font = '600 13px sans-serif';
+	ctx.fillText(data.department || "Computer Science", infoX, 292);
+
+	ctx.fillStyle = '#64748b';
+	ctx.font = '11px sans-serif';
+	ctx.fillText(data.level || "100 Level (Fresher)", infoX, 310);
+
+	ctx.strokeStyle = 'rgba(234, 179, 8, 0.4)';
+	ctx.lineWidth = 1;
+	ctx.beginPath();
+	ctx.moveTo(40, 350);
+	ctx.lineTo(W - 40, 350);
+	ctx.stroke();
+
+	const cgpaVal = parseFloat(data.cgpa || 3.5).toFixed(2);
+	let honours = "SECOND CLASS HONOURS";
+	if (cgpaVal >= 4.50) honours = "FIRST CLASS HONOURS";
+	else if (cgpaVal >= 3.50) honours = "SECOND CLASS UPPER";
+
+	ctx.fillStyle = '#103825';
+	ctx.fillRect(40, 375, W - 80, 75);
+	ctx.strokeStyle = '#34d399';
+	ctx.lineWidth = 2;
+	ctx.strokeRect(40, 375, W - 80, 75);
+
+	ctx.textAlign = 'center';
+	ctx.fillStyle = '#fde047';
+	ctx.font = 'bold 24px sans-serif';
+	ctx.fillText(`🌟 CGPA: ${cgpaVal} / 5.00`, W / 2, 412);
+
+	ctx.fillStyle = '#ecfdf5';
+	ctx.font = 'bold 13px sans-serif';
+	ctx.fillText(`COLLEGIATE STANDING: ${honours}`, W / 2, 436);
+
+	ctx.textAlign = 'left';
+	const details = [
+		{ label: "CAMPUS TITLE", val: data.title || "Campus Scholar & Tech Innovator" },
+		{ label: "STUDENT HANDLE", val: data.username || "@fresher" },
+		{ label: "ENROLLMENT STATUS", val: "VALID UNDERGRADUATE (ENROLLED)" },
+		{ label: "WALLET HOLDINGS", val: "₦" + Number(data.money || 0).toLocaleString() }
+	];
+
+	let currY = 485;
+	details.forEach(item => {
+		ctx.fillStyle = '#94a3b8';
+		ctx.font = 'bold 11px sans-serif';
+		ctx.fillText(item.label, 50, currY);
+
+		ctx.fillStyle = item.label === "ENROLLMENT STATUS" ? '#34d399' : '#f8fafc';
+		ctx.font = '600 14px sans-serif';
+		ctx.fillText(item.val, 50, currY + 20);
+
+		currY += 46;
+	});
+
+	ctx.textAlign = 'right';
+	ctx.fillStyle = '#cbd5e1';
+	ctx.font = 'italic 16px "Brush Script MT", cursive, sans-serif';
+	ctx.fillText('Prof. M. K. Balogun', W - 60, 680);
+	ctx.font = '10px sans-serif';
+	ctx.fillText('REGISTRAR & SENATE SECRETARY', W - 60, 695);
+
+	ctx.strokeStyle = '#94a3b8';
+	ctx.lineWidth = 1;
+	ctx.beginPath();
+	ctx.moveTo(W - 200, 705);
+	ctx.lineTo(W - 60, 705);
+	ctx.stroke();
+
+	ctx.textAlign = 'center';
+	ctx.fillStyle = '#94a3b8';
+	ctx.font = '28px monospace';
+	ctx.fillText('|||||| |||| |||||||| ||||| ||||||| ||||', W / 2, 790);
+
+	ctx.fillStyle = '#64748b';
+	ctx.font = '11px monospace';
+	ctx.fillText('SECURITY CODE: MCL-2026-NGA-AUTH-VERIFIED', W / 2, 815);
+
+	ctx.fillStyle = '#eab308';
+	ctx.font = 'bold 12px sans-serif';
+	ctx.fillText('PLAY FREE AT: MYCAMPUSLIFE.VERCEL.APP', W / 2, 850);
+}
+
+window.downloadStudentCardPNG = function() {
+	const canvas = document.getElementById('student-id-card-canvas');
+	if (!canvas) return;
+	const link = document.createElement('a');
+	link.download = `MyCampusLife_StudentID_${(_currentCardData && _currentCardData.name ? _currentCardData.name.replace(/\s+/g, '_') : 'Pass')}.png`;
+	link.href = canvas.toDataURL('image/png');
+	link.click();
+};
+
+window.copyStudentCardSummary = function() {
+	if (!_currentCardData) return;
+	const text = `🎓 MY CAMPUS LIFE - OFFICIAL STUDENT ID PASS\n` +
+		`Name: ${_currentCardData.name}\n` +
+		`Matric No: ${_currentCardData.matric_no}\n` +
+		`Dept: ${_currentCardData.department} (${_currentCardData.faculty})\n` +
+		`CGPA: ${_currentCardData.cgpa} / 5.00\n` +
+		`Title: ${_currentCardData.title}\n` +
+		`Play now at: https://mycampuslife.vercel.app`;
+	if (navigator.clipboard) {
+		navigator.clipboard.writeText(text);
+	}
+	alert('📋 Student ID Card summary copied to clipboard!');
+};
+
+window.shareStudentCardToWhatsApp = async function() {
+	const canvas = document.getElementById('student-id-card-canvas');
+	if (!canvas) return;
+
+	const shareText = `🎓 Check out my official Student ID on My Campus Life!\n` +
+		`Name: ${(_currentCardData && _currentCardData.name) || 'Student'}\n` +
+		`Dept: ${(_currentCardData && _currentCardData.department) || 'Computer Science'}\n` +
+		`CGPA: ${(_currentCardData && _currentCardData.cgpa) || '4.50'}/5.00\n` +
+		`Play online: https://mycampuslife.vercel.app`;
+
+	if (navigator.canShare) {
+		try {
+			canvas.toBlob(async (blob) => {
+				if (!blob) return;
+				const file = new File([blob], 'student_id_pass.png', { type: 'image/png' });
+				if (navigator.canShare({ files: [file] })) {
+					await navigator.share({
+						title: 'My Campus Life Student ID',
+						text: shareText,
+						files: [file]
+					});
+					return;
+				}
+			});
+		} catch (e) {
+			console.log('Web share fallback to WhatsApp link');
+		}
+	}
+
+	window.downloadStudentCardPNG();
+	const waUrl = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(shareText);
+	window.open(waUrl, '_blank');
 };
 
 /* =======================================================

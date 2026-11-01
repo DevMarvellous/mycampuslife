@@ -573,3 +573,4 @@ func _build_ui() -> void:
 	res_btns.add_child(res_close_btn)
 
 	res_vbox.add_child(res_btns)
+

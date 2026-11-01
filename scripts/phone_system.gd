@@ -1775,6 +1775,13 @@ func _render_id_card_app() -> void:
 
 	dynamic_app_container.add_child(id_card)
 
+	var share_card_btn: Button = _create_styled_button("📲 Share ID Card to WhatsApp / Save Badge", Color(0.12, 0.55, 0.30, 0.96), 40)
+	share_card_btn.pressed.connect(func():
+		if SoundManager: SoundManager.play_click()
+		_trigger_share_student_card()
+	)
+	dynamic_app_container.add_child(share_card_btn)
+
 	var switch_btn: Button = _create_styled_button("Switch Account / Edit Avatar & Dept", Color(0.55, 0.22, 0.16, 0.95), 38)
 	switch_btn.pressed.connect(func():
 		if SoundManager: SoundManager.play_click()
@@ -1787,6 +1794,27 @@ func _render_id_card_app() -> void:
 			RoomManager.change_room(&"admission")
 	)
 	dynamic_app_container.add_child(switch_btn)
+
+
+func _trigger_share_student_card() -> void:
+	if OS.has_feature("web"):
+		var win = JavaScriptBridge.get_interface("window")
+		if win and win.openStudentCardShareModal:
+			var card_data = {
+				"name": StudentProfile.student_name,
+				"username": StudentProfile.username,
+				"matric_no": StudentProfile.matric_no,
+				"department": StudentProfile.admitted_department,
+				"faculty": StudentProfile.admitted_faculty,
+				"cgpa": StudentProfile.cgpa,
+				"title": "%s %s" % [StudentProfile.spawn_badge, StudentProfile.spawn_title],
+				"level": "100 Level (Fresher)",
+				"money": StudentProfile.money
+			}
+			win.openStudentCardShareModal(JSON.stringify(card_data))
+			return
+	if current_player and current_player.has_method("display_notification"):
+		current_player.display_notification("📲 Student ID Pass ready! View in Campus Connect phone.")
 
 
 # ==============================================================================
