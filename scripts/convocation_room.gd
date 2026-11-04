@@ -17,6 +17,8 @@ extends "res://scripts/base_room.gd"
 @onready var cap_toss_spot: CampusObject3D = get_node_or_null("WorldObjects/CapTossSpot") as CampusObject3D
 @onready var stage_spotlight: SpotLight3D = get_node_or_null("ConvocationFixtures/StageSpotlight") as SpotLight3D
 
+const ConvocationCeremonyScene = preload("res://scenes/convocation_ceremony_dialog.tscn")
+var convocation_dialog: Control = null
 var has_conferred_degree: bool = false
 
 
@@ -42,48 +44,24 @@ func _on_stage_podium_interacted() -> void:
 	if not player:
 		return
 
-	var needs: NeedsManager = player.get_node_or_null("NeedsManager") as NeedsManager
-	var cgpa: float = needs.cgpa if needs else 3.50
-	const ProfileStore = preload("res://scripts/data/student_profile.gd")
-	var student_name: String = ProfileStore.student_name if not ProfileStore.student_name.is_empty() else "Distinguished Scholar"
-	var dept_name: String = ProfileStore.admitted_department if not ProfileStore.admitted_department.is_empty() else "University Studies"
-
-	var honors_title: String = "Bachelor of Science"
-	var gift_cash: int = 15000
-
-	if cgpa >= 4.50:
-		honors_title = "First Class Honours with Chancellor's Senate Gold Medal"
-		gift_cash = 35000
-	elif cgpa >= 3.50:
-		honors_title = "Second Class Honours (Upper Division)"
-		gift_cash = 20000
-	elif cgpa >= 2.40:
-		honors_title = "Second Class Honours (Lower Division)"
-		gift_cash = 12000
-	else:
-		honors_title = "Third Class Division"
-		gift_cash = 8000
-
-	ProfileStore.degree_awarded = "%s (%s)" % [dept_name, honors_title]
-	ProfileStore.save_to_disk()
-
-	if needs:
-		needs.modify_money(gift_cash)
-		needs.modify_faith(50.0)
-
-	if SoundManager:
-		SoundManager.play_cheer()
-
 	has_conferred_degree = true
-
-	if player.has_method("display_notification"):
-		player.display_notification("🎓 CHANCELLOR: 'By Senate authority, I admit %s to %s in %s! Congratulations!' (+₦%d Graduation Gift, +50 Faith)" % [student_name, honors_title, dept_name, gift_cash])
 
 	# Flash stage spotlight for dramatic ceremony effect
 	if stage_spotlight:
 		stage_spotlight.light_energy = 4.0
 		var tween: Tween = create_tween()
 		tween.tween_property(stage_spotlight, "light_energy", 1.8, 1.2)
+
+	if not convocation_dialog and menus_layer:
+		convocation_dialog = ConvocationCeremonyScene.instantiate()
+		menus_layer.add_child(convocation_dialog)
+		if convocation_dialog.has_signal("dialog_closed"):
+			convocation_dialog.dialog_closed.connect(_on_menu_closed)
+
+	if convocation_dialog:
+		player.set_physics_process(false)
+		player.velocity = Vector3.ZERO
+		convocation_dialog.open_ceremony(player)
 
 
 func _on_cap_toss_interacted() -> void:

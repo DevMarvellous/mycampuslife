@@ -87,8 +87,8 @@ func update_object_display() -> void:
 			prompt_message = "[E] Open Campus Canteen Menu"
 			object_name = "Mama Cashout Campus Canteen"
 		ObjectType.FELLOWSHIP:
-			prompt_message = "[E] Fellowship Chapel"
-			object_name = "Chapel Altar"
+			prompt_message = "[E] Fellowship Altar (Scripture Sword Drill & Devotional)"
+			object_name = "Chapel Fellowship Altar"
 		ObjectType.ATM:
 			prompt_message = "[E] Withdraw Allowance (+₦2,000)"
 			object_name = "Campus ATM"
@@ -223,15 +223,7 @@ func interact(player: CharacterBody3D) -> void:
 			menu_requested.emit(&"food", player)
 
 		ObjectType.FELLOWSHIP:
-			if Schedule.is_fellowship_time():
-				needs.modify_faith(40.0)
-				needs.modify_energy(10.0)
-				TimeSystem.advance_minutes(30)
-				_show_feedback(player, "Blessed fellowship hour! Faith +40, Energy +10")
-			else:
-				needs.modify_faith(15.0)
-				TimeSystem.advance_minutes(15)
-				_show_feedback(player, "Quiet time & prayer! Faith +15")
+			menu_requested.emit(&"fellowship_devotion", player)
 
 		ObjectType.ATM:
 			needs.modify_money(2000)

@@ -701,6 +701,20 @@ func _on_fixture_menu_requested(menu_type: StringName, p: CharacterBody3D) -> vo
 					praise_node.concert_closed.connect(_on_menu_closed)
 		if praise_node and praise_node.has_method("open_concert"):
 			praise_node.open_concert(p)
+	elif menu_type == &"fellowship_devotion":
+		var devotion_node: Node = menus_layer.get_node_or_null("FellowshipDevotionDialog") if menus_layer else null
+		if not devotion_node and menus_layer:
+			var dev_sc: PackedScene = load("res://scenes/fellowship_devotion_dialog.tscn")
+			if dev_sc:
+				devotion_node = dev_sc.instantiate()
+				menus_layer.add_child(devotion_node)
+				if devotion_node.has_signal("dialog_closed"):
+					devotion_node.dialog_closed.connect(_on_menu_closed)
+		if devotion_node and devotion_node.has_method("open_devotion"):
+			if player:
+				player.set_physics_process(false)
+				player.velocity = Vector3.ZERO
+			devotion_node.open_devotion(p if p else player)
 	elif menu_type == &"gigs":
 		if not gigs_menu and menus_layer:
 			gigs_menu = GigsScene.instantiate()

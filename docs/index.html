@@ -1050,6 +1050,28 @@ html, body, #canvas {
 		</div>
 	</div>
 
+	<!-- 2I. Native HTML WhatsApp & Social Shareable Degree Certificate Modal -->
+	<div id="native-degree-certificate-overlay" style="position:fixed; top:0; left:0; right:0; bottom:0; z-index:86; background:rgba(0,0,0,0.82); display:none; align-items:center; justify-content:center; padding:14px; backdrop-filter:blur(10px);" onclick="if(event.target===this)closeDegreeCertificateShareModal()">
+		<div style="background:rgba(12,18,24,0.98); border:2px solid #eab308; border-radius:18px; width:100%; max-width:620px; max-height:94vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,0.95);">
+			<div style="display:flex; justify-content:space-between; align-items:center; padding:12px 18px; border-bottom:1px solid rgba(234,179,8,0.3); background:rgba(20,28,38,0.95);">
+				<strong style="color:#eab308; font-size:15px;">🎓 OFFICIAL UNIVERSITY DEGREE CERTIFICATE</strong>
+				<button type="button" onclick="closeDegreeCertificateShareModal()" style="background:transparent; border:none; color:#cbd5e1; font-size:20px; cursor:pointer;">✕</button>
+			</div>
+			<div style="padding:14px; overflow-y:auto; display:flex; flex-direction:column; align-items:center; gap:12px;">
+				<canvas id="degree-certificate-canvas" width="900" height="650" style="width:100%; max-width:580px; border-radius:10px; box-shadow:0 8px 30px rgba(0,0,0,0.85);"></canvas>
+				<div style="display:flex; flex-direction:column; width:100%; gap:8px;">
+					<button type="button" class="btn-primary" style="height:44px; background:linear-gradient(135deg, #25d366, #128c7e); border:none; color:#ffffff; font-weight:800; cursor:pointer;" onclick="shareDegreeCertificateToWhatsApp()">
+						📲 Share Graduation to WhatsApp Status
+					</button>
+					<div style="display:flex; gap:8px;">
+						<button type="button" class="btn-secondary" style="height:40px; flex:1;" onclick="downloadDegreeCertificatePNG()">💾 Save PNG Certificate</button>
+						<button type="button" class="btn-secondary" style="height:40px; flex:1;" onclick="copyDegreeCertificateCitation()">📋 Copy Honors Citation</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<!-- 4. Supabase Cloud Database Setup Modal -->
 	<div id="cloud-db-overlay" style="position:fixed; top:0; left:0; right:0; bottom:0; z-index:85; background:rgba(0,0,0,0.72); display:none; align-items:center; justify-content:center; padding:16px; backdrop-filter:blur(8px);">
 		<div style="background:rgba(10,22,16,0.98); border:2px solid #f5c518; border-radius:18px; width:95%; max-width:460px; padding:20px; box-shadow:0 16px 48px rgba(0,0,0,0.9); color:#f8fafc;">
@@ -1106,7 +1128,7 @@ html, body, #canvas {
 	}, true);
 })();
 
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":4734404,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":4774060,"index.wasm":39514754},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
@@ -2781,6 +2803,283 @@ window.shareStudentCardToWhatsApp = async function() {
 	}
 
 	window.downloadStudentCardPNG();
+	const waUrl = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(shareText);
+	window.open(waUrl, '_blank');
+};
+
+/* =======================================================
+   2I. CONVOCATION DEGREE CERTIFICATE SHARING ENGINE
+   ======================================================= */
+let _currentDegreeData = null;
+
+window.openDegreeCertificateShareModal = function(certJson) {
+	try {
+		if (typeof certJson === 'string') {
+			_currentDegreeData = JSON.parse(certJson);
+		} else if (typeof certJson === 'object') {
+			_currentDegreeData = certJson;
+		}
+	} catch (e) {
+		_currentDegreeData = null;
+	}
+	if (!_currentDegreeData) {
+		_currentDegreeData = {
+			name: (window.ADMISSION_STATE && window.ADMISSION_STATE.name) ? window.ADMISSION_STATE.name : "Distinguished Scholar",
+			matric_no: "FUCL/2026/CSC/1042",
+			department: "Computer Science",
+			faculty: "Faculty of Sciences",
+			cgpa: 4.85,
+			honors: "FIRST CLASS HONOURS WITH SENATE GOLD MEDAL",
+			date: "November 2026"
+		};
+	}
+
+	const modal = document.getElementById('native-degree-certificate-overlay');
+	if (modal) modal.style.display = 'flex';
+	renderDegreeCertificateCanvas(_currentDegreeData);
+};
+
+window.closeDegreeCertificateShareModal = function() {
+	const modal = document.getElementById('native-degree-certificate-overlay');
+	if (modal) modal.style.display = 'none';
+};
+
+function renderDegreeCertificateCanvas(data) {
+	const canvas = document.getElementById('degree-certificate-canvas');
+	if (!canvas) return;
+	const ctx = canvas.getContext('2d');
+	const W = canvas.width;
+	const H = canvas.height;
+
+	// 1. Luxury Cream/Parchment Background
+	const bgGrad = ctx.createLinearGradient(0, 0, W, H);
+	bgGrad.addColorStop(0, '#fefbf3');
+	bgGrad.addColorStop(0.5, '#fbf6e8');
+	bgGrad.addColorStop(1, '#f7eed8');
+	ctx.fillStyle = bgGrad;
+	ctx.fillRect(0, 0, W, H);
+
+	// 2. Dual Ornate Gold & Emerald Borders
+	ctx.strokeStyle = '#c8963e';
+	ctx.lineWidth = 8;
+	ctx.strokeRect(18, 18, W - 36, H - 36);
+
+	ctx.strokeStyle = '#0f3b28';
+	ctx.lineWidth = 2.5;
+	ctx.strokeRect(26, 26, W - 52, H - 52);
+
+	ctx.strokeStyle = '#e6ca65';
+	ctx.lineWidth = 1;
+	ctx.strokeRect(32, 32, W - 64, H - 64);
+
+	// 3. University Crest & Seal Header
+	ctx.textAlign = 'center';
+	ctx.fillStyle = '#0f3b28';
+	ctx.font = 'bold 22px "Times New Roman", Georgia, serif';
+	ctx.fillText('FEDERAL UNIVERSITY OF MY CAMPUS LIFE', W / 2, 75);
+
+	ctx.fillStyle = '#8c6d23';
+	ctx.font = 'italic 12px "Times New Roman", Georgia, serif';
+	ctx.fillText('IN DEO SPERAMUS • VIRTUS, INTEGRITAS ET SCIENTIA', W / 2, 95);
+
+	// Decorative divider
+	ctx.strokeStyle = '#c8963e';
+	ctx.lineWidth = 2;
+	ctx.beginPath();
+	ctx.moveTo(W / 2 - 180, 108);
+	ctx.lineTo(W / 2 + 180, 108);
+	ctx.stroke();
+
+	// Title
+	ctx.fillStyle = '#0f3b28';
+	ctx.font = 'bold 15px sans-serif';
+	ctx.fillText('BY THE AUTHORITY OF THE UNIVERSITY SENATE', W / 2, 132);
+
+	ctx.font = 'italic 15px "Times New Roman", Georgia, serif';
+	ctx.fillStyle = '#475569';
+	ctx.fillText('BE IT KNOWN TO ALL MEN THAT', W / 2, 160);
+
+	// Student Name (Large Serif)
+	const graduateName = (data.name || 'DISTINGUISHED GRADUATE').toUpperCase();
+	ctx.fillStyle = '#0b2619';
+	ctx.font = 'bold 32px "Times New Roman", Georgia, serif';
+	ctx.fillText(graduateName, W / 2, 210);
+
+	// Underline under name
+	ctx.strokeStyle = '#c8963e';
+	ctx.lineWidth = 1.5;
+	ctx.beginPath();
+	ctx.moveTo(W / 2 - 220, 222);
+	ctx.lineTo(W / 2 + 220, 222);
+	ctx.stroke();
+
+	// Citation Body
+	ctx.font = '14px "Times New Roman", Georgia, serif';
+	ctx.fillStyle = '#334155';
+	ctx.fillText('HAVING FULFILLED ALL STATUTORY REQUIREMENTS OF THE UNIVERSITY SENATE', W / 2, 252);
+	ctx.fillText('AND PASSED THE PRESCRIBED EXAMINATIONS HAS THIS DAY BEEN ADMITTED TO THE DEGREE OF', W / 2, 274);
+
+	// Honors Pill Banner
+	const honorsText = (data.honors || 'BACHELOR OF SCIENCE (FIRST CLASS HONOURS)').toUpperCase();
+	const bannerW = 620;
+	const bannerH = 46;
+	const bannerX = (W - bannerW) / 2;
+	const bannerY = 295;
+
+	ctx.fillStyle = '#0f3b28';
+	ctx.beginPath();
+	ctx.roundRect(bannerX, bannerY, bannerW, bannerH, 8);
+	ctx.fill();
+
+	ctx.strokeStyle = '#eab308';
+	ctx.lineWidth = 2;
+	ctx.beginPath();
+	ctx.roundRect(bannerX, bannerY, bannerW, bannerH, 8);
+	ctx.stroke();
+
+	ctx.fillStyle = '#fef08a';
+	ctx.font = 'bold 16px "Times New Roman", Georgia, serif';
+	ctx.fillText(honorsText, W / 2, bannerY + 28);
+
+	// Major & Department
+	const deptText = ('IN ' + (data.department || 'COMPUTER SCIENCE')).toUpperCase();
+	ctx.fillStyle = '#0f3b28';
+	ctx.font = 'bold 16px "Times New Roman", Georgia, serif';
+	ctx.fillText(deptText, W / 2, 375);
+
+	ctx.fillStyle = '#64748b';
+	ctx.font = '13px sans-serif';
+	ctx.fillText(`Matriculation No: ${data.matric_no || 'FUCL/2026/042'}   •   Cumulative Grade Point Average: ${(Number(data.cgpa) || 4.50).toFixed(2)} / 5.00`, W / 2, 402);
+
+	// Senate Gold Stamp (Embossed Circle)
+	const stampX = W / 2;
+	const stampY = 485;
+	ctx.beginPath();
+	ctx.arc(stampX, stampY, 44, 0, Math.PI * 2);
+	ctx.fillStyle = '#fef3c7';
+	ctx.fill();
+	ctx.strokeStyle = '#c8963e';
+	ctx.lineWidth = 3;
+	ctx.stroke();
+
+	ctx.beginPath();
+	ctx.arc(stampX, stampY, 38, 0, Math.PI * 2);
+	ctx.strokeStyle = '#d97706';
+	ctx.lineWidth = 1;
+	ctx.stroke();
+
+	ctx.fillStyle = '#b45309';
+	ctx.font = 'bold 10px sans-serif';
+	ctx.fillText('SENATE SEAL', stampX, stampY - 10);
+	ctx.font = '16px sans-serif';
+	ctx.fillText('⭐ 🎓 ⭐', stampX, stampY + 8);
+	ctx.font = 'bold 9px sans-serif';
+	ctx.fillText('CONFERRED', stampX, stampY + 22);
+
+	// Vice-Chancellor Signature (Left)
+	ctx.textAlign = 'left';
+	ctx.fillStyle = '#1e293b';
+	ctx.font = 'italic 20px "Brush Script MT", cursive, sans-serif';
+	ctx.fillText('Prof. I. O. Okonjo', 70, 500);
+
+	ctx.strokeStyle = '#94a3b8';
+	ctx.lineWidth = 1;
+	ctx.beginPath();
+	ctx.moveTo(60, 510);
+	ctx.lineTo(260, 510);
+	ctx.stroke();
+
+	ctx.font = 'bold 11px sans-serif';
+	ctx.fillStyle = '#0f3b28';
+	ctx.fillText('VICE-CHANCELLOR', 70, 526);
+	ctx.font = '10px sans-serif';
+	ctx.fillStyle = '#64748b';
+	ctx.fillText('Chairman of the University Senate', 70, 540);
+
+	// Registrar Signature (Right)
+	ctx.textAlign = 'right';
+	ctx.fillStyle = '#1e293b';
+	ctx.font = 'italic 20px "Brush Script MT", cursive, sans-serif';
+	ctx.fillText('Prof. M. K. Balogun', W - 70, 500);
+
+	ctx.strokeStyle = '#94a3b8';
+	ctx.lineWidth = 1;
+	ctx.beginPath();
+	ctx.moveTo(W - 260, 510);
+	ctx.lineTo(W - 60, 510);
+	ctx.stroke();
+
+	ctx.font = 'bold 11px sans-serif';
+	ctx.fillStyle = '#0f3b28';
+	ctx.fillText('REGISTRAR', W - 70, 526);
+	ctx.font = '10px sans-serif';
+	ctx.fillStyle = '#64748b';
+	ctx.fillText('Secretary to Council & Senate', W - 70, 540);
+
+	// Bottom verification bar
+	ctx.textAlign = 'center';
+	ctx.font = 'bold 11px sans-serif';
+	ctx.fillStyle = '#0f3b28';
+	ctx.fillText('VERIFIED UNIVERSITY CONVOCATION RECORD • MYCAMPUSLIFE.VERCEL.APP', W / 2, 605);
+}
+
+window.downloadDegreeCertificatePNG = function() {
+	const canvas = document.getElementById('degree-certificate-canvas');
+	if (!canvas) return;
+	const link = document.createElement('a');
+	const cleanName = (_currentDegreeData && _currentDegreeData.name ? _currentDegreeData.name.replace(/\s+/g, '_') : 'Graduate');
+	link.download = `Degree_Certificate_${cleanName}.png`;
+	link.href = canvas.toDataURL('image/png');
+	link.click();
+};
+
+window.copyDegreeCertificateCitation = function() {
+	if (!_currentDegreeData) return;
+	const text = `🎓 FEDERAL UNIVERSITY OF MY CAMPUS LIFE - DEGREE CONFERMENT\n` +
+		`Graduate: ${_currentDegreeData.name}\n` +
+		`Degree: ${_currentDegreeData.honors}\n` +
+		`Department: ${_currentDegreeData.department}\n` +
+		`Matric No: ${_currentDegreeData.matric_no}\n` +
+		`Final CGPA: ${_currentDegreeData.cgpa} / 5.00\n` +
+		`Play & Graduate at: https://mycampuslife.vercel.app`;
+	if (navigator.clipboard) {
+		navigator.clipboard.writeText(text);
+	}
+	alert('📋 Official Degree Citation copied to clipboard!');
+};
+
+window.shareDegreeCertificateToWhatsApp = async function() {
+	const canvas = document.getElementById('degree-certificate-canvas');
+	if (!canvas) return;
+
+	const shareText = `🎓 ALUTA CONTINUA! VICTORIA ACERTA!! 🎉\n` +
+		`I have officially graduated from My Campus Life University!\n` +
+		`Scholar: ${(_currentDegreeData && _currentDegreeData.name) || 'Graduate'}\n` +
+		`Degree: ${(_currentDegreeData && _currentDegreeData.honors) || 'B.Sc'}\n` +
+		`Department: ${(_currentDegreeData && _currentDegreeData.department) || 'University Studies'}\n` +
+		`Final CGPA: ${(_currentDegreeData && _currentDegreeData.cgpa) || '4.50'} / 5.00\n` +
+		`Join me on campus: https://mycampuslife.vercel.app`;
+
+	if (navigator.canShare) {
+		try {
+			canvas.toBlob(async (blob) => {
+				if (!blob) return;
+				const file = new File([blob], 'university_degree_certificate.png', { type: 'image/png' });
+				if (navigator.canShare({ files: [file] })) {
+					await navigator.share({
+						title: 'My Campus Life Degree Certificate',
+						text: shareText,
+						files: [file]
+					});
+					return;
+				}
+			});
+		} catch (e) {
+			console.log('Web share fallback to WhatsApp link');
+		}
+	}
+
+	window.downloadDegreeCertificatePNG();
 	const waUrl = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(shareText);
 	window.open(waUrl, '_blank');
 };
