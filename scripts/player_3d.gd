@@ -72,7 +72,7 @@ const CAM_ZOOM_MIN: float = 0.55 # Close-up avatar view
 const CAM_ZOOM_MAX: float = 1.6  # Wide room overview
 const CAM_ZOOM_STEP: float = 0.12
 const CAM_BASE_OFFSET: Vector3 = Vector3(0, 4.8, 3.8)
-const CAM_ZOOM_PRESETS: Array[float] = [1.0, 0.78, 0.62, 0.48]
+const CAM_ZOOM_PRESETS: Array[float] = [1.0, 0.78, 0.62, 0.48, 1.35]
 const CAM_VIEW_MODES: Array[Dictionary] = [
 	{
 		"name": "Top View",
@@ -97,6 +97,12 @@ const CAM_VIEW_MODES: Array[Dictionary] = [
 		"offset": Vector3(0, 1.45, 1.65),
 		"pitch": -9.0,
 		"fov": 54.0
+	},
+	{
+		"name": "Wide Campus",
+		"offset": Vector3(0, 6.6, 5.2),
+		"pitch": -51.0,
+		"fov": 62.0
 	}
 ]
 var cam_zoom_preset_idx: int = 0

@@ -93,6 +93,11 @@ var touch_right: bool = false
 
 func _ready() -> void:
 	visible = false
+	set_process(false)
+	var vp: SubViewport = %SubViewport if has_node("%SubViewport") else null
+	if vp:
+		vp.own_world_3d = true
+		vp.render_target_update_mode = SubViewport.UPDATE_DISABLED
 	_build_ui_overlay()
 
 
@@ -106,12 +111,18 @@ func open_danfo_route(player: CharacterBody3D) -> void:
 	current_stop_idx = 0
 	is_driving = true
 
+	var vp: SubViewport = %SubViewport if has_node("%SubViewport") else null
+	if vp:
+		vp.own_world_3d = true
+		vp.render_target_update_mode = SubViewport.UPDATE_WHEN_VISIBLE
+
 	# Initial passengers waiting at gate
 	_board_passengers_at_stop(STOPS[0], 3)
 
 	_setup_3d_circuit()
 	_update_ui_stats()
 	visible = true
+	set_process(true)
 
 	if SoundManager: SoundManager.play_whistle()
 	if current_player and current_player.has_method("display_notification"):
@@ -121,6 +132,16 @@ func open_danfo_route(player: CharacterBody3D) -> void:
 func close_game() -> void:
 	is_driving = false
 	visible = false
+	set_process(false)
+	var vp: SubViewport = %SubViewport if has_node("%SubViewport") else null
+	if vp:
+		vp.render_target_update_mode = SubViewport.UPDATE_DISABLED
+		for c in vp.get_children():
+			c.queue_free()
+	bus_body = null
+	bus_visual = null
+	bus_camera = null
+	stops_nodes.clear()
 	current_player = null
 	game_closed.emit()
 

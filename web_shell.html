@@ -886,6 +886,10 @@ html, body, #canvas {
 				<div style="background:rgba(16,42,30,0.9); border:1px solid #34d399; border-radius:10px; padding:10px 12px; font-size:12px; color:#ecfdf5;">
 					<strong style="color:#fcd34d;">🎓 Semester Goal:</strong> Attend lectures, hustle gigs, confirm your department at the Senate Building, and stack ₦25,000+ with 4.50+ CGPA!
 				</div>
+				<button type="button" class="drip-card" style="border-color:#f5c518; background:rgba(38,32,12,0.95);" onclick="document.getElementById('native-tasks-overlay').style.display='none'; triggerGodotHudAction('opportunity');">
+					<div class="drip-info"><span class="drip-name" style="color:#fde047;">⚡ Live Campus Opportunity &amp; Dilemma</span><span class="drip-desc">Respond to a live campus encounter for instant Cash, CGPA &amp; Faith rewards!</span></div>
+					<span style="color:#fde047; font-weight:800; font-size:12px;">OPEN ➔</span>
+				</button>
 				<button type="button" class="drip-card" onclick="selectHtmlMapDest('senate')">
 					<div class="drip-info"><span class="drip-name">🏛️ Confirm Department at Senate</span><span class="drip-desc">Pass Departmental Screening for +₦5,000 Merit Grant</span></div>
 					<span style="color:#34d399; font-weight:800; font-size:12px;">GO ➔</span>
@@ -955,6 +959,7 @@ html, body, #canvas {
 						<button type="button" id="cam-preset-1" class="chip-btn" style="padding:8px;" onclick="setCameraPreset(1)">📸 Classic Angle</button>
 						<button type="button" id="cam-preset-2" class="chip-btn" style="padding:8px;" onclick="setCameraPreset(2)">🎥 3D Perspective</button>
 						<button type="button" id="cam-preset-3" class="chip-btn" style="padding:8px;" onclick="setCameraPreset(3)">🔍 Close Follow</button>
+						<button type="button" id="cam-preset-4" class="chip-btn" style="padding:8px; grid-column:span 2;" onclick="setCameraPreset(4)">🌍 Wide Campus Overview</button>
 					</div>
 				</div>
 				<div>

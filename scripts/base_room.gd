@@ -57,6 +57,7 @@ var is_contraband_hidden: bool = false
 var warden_banner_ui: PanelContainer = null
 var warden_countdown_label: Label = null
 var autonomous_peers: Array[Dictionary] = []
+var _net_puppets_timer: float = 0.0
 
 @onready var food_menu: Control = $MenusLayer/FoodMenu if has_node("MenusLayer/FoodMenu") else null
 @onready var study_menu: Control = $MenusLayer/StudyMenu if has_node("MenusLayer/StudyMenu") else null
@@ -253,7 +254,10 @@ func _process(delta: float) -> void:
 		if warden_panic_timer <= 0.0:
 			_resolve_warden_caught()
 
-	_process_network_puppets()
+	_net_puppets_timer += delta
+	if _net_puppets_timer >= 0.10:
+		_net_puppets_timer = 0.0
+		_process_network_puppets()
 	_process_autonomous_coursemates(delta)
 
 
@@ -431,10 +435,18 @@ func _configure_dynamic_hostel_room() -> void:
 
 	var room_title: Label3D = get_node_or_null("RoomDecor/RoomTitle3D") as Label3D
 	if room_title:
+		var upg_cnt: int = ProfileStore.owned_upgrades.size()
+		var tier_label: String = "STANDARD SHARED BUNK"
+		if upg_cnt >= 7:
+			tier_label = "PRESIDENTIAL HONOURS SUITE"
+		elif upg_cnt >= 4:
+			tier_label = "VIP SELF-CONTAIN SUITE"
+		elif upg_cnt >= 2:
+			tier_label = "CORNER EXECUTIVE BUNK"
 		if is_female:
-			room_title.text = "MOREMI HALL (FEMALE HOSTEL - ROOM 204)"
+			room_title.text = "MOREMI HALL (RM 204 • %s)" % tier_label
 		else:
-			room_title.text = "HALL 2 (MALE HOSTEL - ROOM 112)"
+			room_title.text = "HALL 2 (RM 112 • %s)" % tier_label
 
 	var roommate_npc: NPC3D = get_node_or_null("NPCs/SegunRoommate") as NPC3D
 	if roommate_npc:
@@ -592,6 +604,35 @@ func _configure_dynamic_hostel_room() -> void:
 				c_mat.albedo_color = Color(0.1, 0.1, 0.12, 1.0)
 				c_mat.metallic = 0.5
 				chair_mesh.material_override = c_mat
+
+		if ProfileStore.owned_upgrades.has("mosquito_net") and not decor.has_node("MosquitoNetMesh"):
+			var net_mesh := MeshInstance3D.new()
+			net_mesh.name = "MosquitoNetMesh"
+			var n_box := BoxMesh.new()
+			n_box.size = Vector3(1.92, 1.15, 1.12)
+			net_mesh.mesh = n_box
+			var n_mat := StandardMaterial3D.new()
+			n_mat.albedo_color = Color(0.92, 0.97, 1.0, 0.28)
+			n_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+			n_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+			net_mesh.material_override = n_mat
+			net_mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			net_mesh.position = Vector3(-6.5, 1.35, -6.0)
+			decor.add_child(net_mesh)
+
+		if ProfileStore.owned_upgrades.has("scholars_rug") and not decor.has_node("ScholarsRugMesh"):
+			var rug_mesh := MeshInstance3D.new()
+			rug_mesh.name = "ScholarsRugMesh"
+			var r_box := BoxMesh.new()
+			r_box.size = Vector3(4.8, 0.02, 3.6)
+			rug_mesh.mesh = r_box
+			var r_mat := StandardMaterial3D.new()
+			r_mat.albedo_color = Color(0.55, 0.12, 0.18, 1.0) # Royal Burgundy Persian Carpet
+			r_mat.roughness = 0.85
+			rug_mesh.material_override = r_mat
+			rug_mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			rug_mesh.position = Vector3(0.0, 0.015, -1.5)
+			decor.add_child(rug_mesh)
 
 
 func _connect_interactive_fixtures() -> void:
@@ -850,9 +891,7 @@ func _open_danfo_game(p: CharacterBody3D) -> void:
 		danfo_game = DanfoGameScene.instantiate()
 		menus_layer.add_child(danfo_game)
 		if danfo_game.has_signal("game_closed"):
-			danfo_game.game_closed.connect(func(_earnings: int):
-				_on_menu_closed()
-			)
+			danfo_game.game_closed.connect(_on_menu_closed)
 	if danfo_game and danfo_game.has_method("open_danfo_route"):
 		if player:
 			player.set_physics_process(false)

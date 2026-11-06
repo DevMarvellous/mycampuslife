@@ -133,6 +133,30 @@ const ITEMS: Array[Dictionary] = [
 		"category": "upgrade",
 		"icon": "🪑",
 		"description": "Lumbar support for long study nights. Reduces study energy drain by -30%."
+	},
+	{
+		"id": "vitamin_c_pack",
+		"name": "Campus Chemist Wellness Pack (Vitamin C & Malt Tonic)",
+		"price": 2200,
+		"category": "provisions",
+		"icon": "💊",
+		"description": "Nurse Amaka's immune booster pack! Restores +40% Energy, +25% Hunger, and +15 Faith."
+	},
+	{
+		"id": "mosquito_net",
+		"name": "Insecticide-Treated Hostel Mosquito Net",
+		"price": 3000,
+		"category": "upgrade",
+		"icon": "🛡️",
+		"description": "Protects your bunk from campus mosquitoes! Prevents night fever and adds +15 Faith on sleep."
+	},
+	{
+		"id": "scholars_rug",
+		"name": "Royal Persian Hostel Center Rug & Executive Curtains",
+		"price": 9500,
+		"category": "upgrade",
+		"icon": "✨",
+		"description": "Transforms your hostel room into a VIP Scholar Suite! Grants +20 Clout and +10% Study Focus."
 	}
 ]
 

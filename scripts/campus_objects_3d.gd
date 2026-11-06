@@ -190,7 +190,13 @@ func interact(player: CharacterBody3D) -> void:
 					needs.stat_changed.emit(&"energy", needs.energy, needs.max_energy)
 					if StudentProfile.owned_upgrades.has("orthopedic_mattress"):
 						needs.modify_faith(25.0)
-						_show_feedback(player, "Deep sleep on your Orthopedic Mattress! Energy 100%, Faith +25, Full Focus!")
+						var net_msg: String = " + Treated Mosquito Net protection!" if StudentProfile.owned_upgrades.has("mosquito_net") else ""
+						if StudentProfile.owned_upgrades.has("mosquito_net"):
+							needs.modify_faith(15.0)
+						_show_feedback(player, "Deep sleep on your Orthopedic Mattress%s Energy 100%%, Faith boosted!" % net_msg)
+					elif StudentProfile.owned_upgrades.has("mosquito_net"):
+						needs.modify_faith(15.0)
+						_show_feedback(player, "Peaceful mosquito-free sleep under your Treated Net! Energy 100%, Faith +15!")
 					elif StudentProfile.owned_upgrades.has("hostel_fan"):
 						needs.modify_faith(15.0)
 						_show_feedback(player, "Power rested with your rechargeable fan on! Energy 100%, Faith +15!")
@@ -206,7 +212,13 @@ func interact(player: CharacterBody3D) -> void:
 				needs.stat_changed.emit(&"energy", needs.energy, needs.max_energy)
 				if StudentProfile.owned_upgrades.has("orthopedic_mattress"):
 					needs.modify_faith(25.0)
-					_show_feedback(player, "Deep sleep on your Orthopedic Mattress! Energy 100%, Faith +25, Full Focus!")
+					var net_msg2: String = " + Treated Mosquito Net protection!" if StudentProfile.owned_upgrades.has("mosquito_net") else ""
+					if StudentProfile.owned_upgrades.has("mosquito_net"):
+						needs.modify_faith(15.0)
+					_show_feedback(player, "Deep sleep on your Orthopedic Mattress%s Energy 100%%, Faith boosted!" % net_msg2)
+				elif StudentProfile.owned_upgrades.has("mosquito_net"):
+					needs.modify_faith(15.0)
+					_show_feedback(player, "Peaceful mosquito-free sleep under your Treated Net! Energy 100%, Faith +15!")
 				elif StudentProfile.owned_upgrades.has("hostel_fan"):
 					needs.modify_faith(15.0)
 					_show_feedback(player, "Power rested with your rechargeable fan on! Energy 100%, Faith +15!")

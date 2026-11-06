@@ -275,6 +275,10 @@ func _on_js_hud_action(args: Array) -> void:
 			var hud_node: HUD = get_parent().get_node_or_null("HUD") as HUD if get_parent() else null
 			if hud_node:
 				hud_node.trigger_tasks_sheet()
+		"opportunity":
+			var hud_opp: HUD = get_parent().get_node_or_null("HUD") as HUD if get_parent() else null
+			if hud_opp and hud_opp.has_method("open_campus_opportunity_modal"):
+				hud_opp.open_campus_opportunity_modal()
 		"objective":
 			var hud_node2: HUD = get_parent().get_node_or_null("HUD") as HUD if get_parent() else null
 			if hud_node2:

@@ -309,6 +309,19 @@ func _buy_gadget(item: Dictionary) -> void:
 		needs.modify_cgpa(0.15)
 	elif item_id == "perfume_oil":
 		needs.modify_faith(10.0)
+	elif item_id == "vitamin_c_pack":
+		needs.modify_energy(40.0)
+		needs.modify_hunger(25.0)
+		needs.modify_faith(15.0)
+		StudentProfile.add_backpack_item({
+			"id": "vitamin_c_pack",
+			"name": "Vitamin C & Malt Tonic Pack",
+			"type": "food",
+			"hunger": 25.0,
+			"energy": 40.0,
+			"desc": "Campus Chemist immune booster pack (+40% Energy, +25% Hunger).",
+			"count": 1
+		})
 
 	SoundManager.play_coin()
 	_notify_player("Purchased %s! %s" % [item["name"], item.get("description", "")])

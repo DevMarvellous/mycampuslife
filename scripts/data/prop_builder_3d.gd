@@ -78,6 +78,8 @@ static func _add_box(parent: Node3D, size: Vector3, pos: Vector3, color: Color, 
 	mi.mesh = bm
 	mi.position = pos
 	mi.rotation_degrees = rot_deg
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mi.gi_mode = GeometryInstance3D.GI_MODE_DISABLED
 	mi.material_override = get_mat(color, 0.6, metallic, emission)
 	parent.add_child(mi)
 	return mi
@@ -93,6 +95,8 @@ static func _add_cyl(parent: Node3D, top_r: float, bot_r: float, h: float, pos: 
 	mi.mesh = cm
 	mi.position = pos
 	mi.rotation_degrees = rot_deg
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mi.gi_mode = GeometryInstance3D.GI_MODE_DISABLED
 	mi.material_override = get_mat(color, 0.55, metallic, emission)
 	parent.add_child(mi)
 	return mi

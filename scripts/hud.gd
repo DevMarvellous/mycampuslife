@@ -21,7 +21,10 @@ var toast_tween: Tween = null
 
 var objective_btn: Button = null
 var tasks_toggle_btn: Button = null
+var view_toggle_btn: Button = null
 var tasks_sheet: PanelContainer = null
+var opportunity_modal: PanelContainer = null
+var current_opportunity_idx: int = 0
 var clout_status_btn: Button = null
 var _cached_energy: float = 100.0
 var _cached_hunger: float = 100.0
@@ -29,6 +32,57 @@ var _cached_faith: float = 100.0
 var _cached_money: int = 5000
 var _cached_cgpa: float = 3.5
 var _current_obj_dest: StringName = &"class"
+
+const CAMPUS_OPPORTUNITIES: Array[Dictionary] = [
+	{
+		"title": "★ LOST MATRIC ID & WALLET AT SHUTTLE PARK",
+		"desc": "You spot a 100L Engineering student's Matric ID card and wallet dropped near the yellow Danfo shuttle bench! How do you respond?",
+		"choice_a": "Return to Senate Registry & Trace Owner (+₦3,000 Reward, +25 Faith, +0.05 CGPA)",
+		"effect_a": {"money": 3000, "faith": 25.0, "cgpa": 0.05, "msg": "Dean commends your honesty! +₦3,000 Integrity Reward, +25 Faith, +0.05 CGPA!"},
+		"choice_b": "Hand to SUG Exco Announcement Desk (+15 Faith, +15 Energy)",
+		"effect_b": {"faith": 15.0, "energy": 15.0, "msg": "Comrade Ojo announces the found ID over the megaphone! +15 Faith, +15 Energy!"}
+	},
+	{
+		"title": "★ COURSEMATE TUTORIAL & HANDOUT APPEAL",
+		"desc": "Your coursemate Chinedu is struggling with the CSC 101 pointer arithmetic assignment due in 1 hour and asks for help.",
+		"choice_a": "Tutor Coursemate & Share Past Questions (+0.10 CGPA, +25 Faith, -10 Energy)",
+		"effect_a": {"cgpa": 0.10, "faith": 25.0, "energy": -10.0, "msg": "Teaching others sharpened your own mastery! +0.10 CGPA, +25 Faith!"},
+		"choice_b": "Share Hostel Noodles & Study Together (+30 Hunger, +20 Faith)",
+		"effect_b": {"hunger": 30.0, "faith": 20.0, "msg": "Shared hot noodles and solved the questions together! +30 Hunger, +20 Faith!"}
+	},
+	{
+		"title": "★ DR. ADEBAYO IMPROMPTU CHALKBOARD CHALLENGE",
+		"desc": "Dr. Adebayo pauses the lecture in LT1 and offers bonus marks + a cash book prize to anyone who can solve the complexity proof on the board!",
+		"choice_a": "Step Up to the Board & Solve Proof (+0.12 CGPA, +₦2,000 Prize, -12 Energy)",
+		"effect_a": {"cgpa": 0.12, "money": 2000, "energy": -12.0, "msg": "Standing ovation in LT1! Dr. Adebayo awards +0.12 CGPA & +₦2,000 Book Prize!"},
+		"choice_b": "Jot Detailed Solution Notes from Front Row (+0.06 CGPA, +10 Faith)",
+		"effect_b": {"cgpa": 0.06, "faith": 10.0, "msg": "Captured crystal-clear exam notes in your jotter! +0.06 CGPA, +10 Faith!"}
+	},
+	{
+		"title": "★ SILICON LAGOON CAMPUS STARTUP PITCH",
+		"desc": "Tech Hub mentors are hosting a 5-minute spot pitch for student solutions that improve Nigerian university campus life!",
+		"choice_a": "Pitch CampusPay Shuttle Tracker (+₦3,500 Grant, +15 Faith, -15 Energy)",
+		"effect_a": {"money": 3500, "faith": 15.0, "energy": -15.0, "msg": "Judges loved your pitch! Awarded +₦3,500 Micro-Innovation Grant!"},
+		"choice_b": "Attend Tech Workshop & Refreshments (+25 Hunger, +0.05 CGPA)",
+		"effect_b": {"hunger": 25.0, "cgpa": 0.05, "msg": "Learned modern software architecture & enjoyed snack packs! +25 Hunger, +0.05 CGPA!"}
+	},
+	{
+		"title": "★ HALL 2 RAINY NIGHT & MOSQUITO ALERT",
+		"desc": "Heavy tropical rain is falling outside Hall 2 and mosquitoes are buzzing around the corridor before tomorrow's 8 AM test!",
+		"choice_a": "Tuck Treated Mosquito Net & Take Vitamin C (+35 Energy, +20 Faith)",
+		"effect_a": {"energy": 35.0, "faith": 20.0, "msg": "Slept soundly with zero mosquito bites! Woke up refreshed (+35 Energy, +20 Faith)!"},
+		"choice_b": "Brew Hot Ginger Tea & Revise Notes (+20 Energy, +0.05 CGPA)",
+		"effect_b": {"energy": 20.0, "cgpa": 0.05, "msg": "Warm ginger tea kept you focused through revision! +20 Energy, +0.05 CGPA!"}
+	},
+	{
+		"title": "★ JOINT CAMPUS FELLOWSHIP WELFARE OUTREACH",
+		"desc": "Sister Blessing & Brother Emmanuel are organizing an evening welfare drive to share revision packs and encouragement with freshers.",
+		"choice_a": "Volunteer to Distribute Study Packs (+35 Faith, +25 Hunger, +₦1,500 Stipend)",
+		"effect_a": {"faith": 35.0, "hunger": 25.0, "money": 1500, "msg": "Blessed the campus community! +35 Faith, +25 Hunger, +₦1,500 Welfare Stipend!"},
+		"choice_b": "Join Acoustic Worship & Prayer Circle (+30 Faith, +25 Energy)",
+		"effect_b": {"faith": 30.0, "energy": 25.0, "msg": "Spiritually uplifted and recharged for the week! +30 Faith, +25 Energy!"}
+	}
+]
 
 
 func _ready() -> void:
@@ -133,6 +187,20 @@ func _create_objective_pill_ui() -> void:
 	tasks_toggle_btn.pressed.connect(_toggle_tasks_sheet)
 	container.add_child(tasks_toggle_btn)
 
+	view_toggle_btn = Button.new()
+	view_toggle_btn.name = "ViewToggleBtn"
+	view_toggle_btn.text = "▲ View"
+	view_toggle_btn.custom_minimum_size = Vector2(68, 36)
+	view_toggle_btn.focus_mode = Control.FOCUS_NONE
+	view_toggle_btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	view_toggle_btn.add_theme_font_size_override(&"font_size", 12)
+	view_toggle_btn.add_theme_stylebox_override(&"normal", t_style)
+	view_toggle_btn.add_theme_stylebox_override(&"hover", t_style)
+	view_toggle_btn.add_theme_stylebox_override(&"pressed", t_style)
+	view_toggle_btn.pressed.connect(_on_hud_view_toggle_pressed)
+	container.add_child(view_toggle_btn)
+	container.offset_right = 404.0
+
 	add_child(container)
 
 	# Clout & Multiplayer Online Status Pill beneath Objective Pill
@@ -172,6 +240,190 @@ func _create_objective_pill_ui() -> void:
 
 	_refresh_objective_pill()
 	_create_tasks_sheet_ui()
+	_create_opportunity_modal_ui()
+
+
+func _on_hud_view_toggle_pressed() -> void:
+	if SoundManager:
+		SoundManager.play_click()
+	var cur_scene: Node = get_tree().current_scene if get_tree() else null
+	if not cur_scene:
+		return
+	var p: Node = cur_scene.get_node_or_null("Player3D")
+	if p and p.has_method("cycle_camera_zoom"):
+		var mode_name: String = p.cycle_camera_zoom()
+		if view_toggle_btn:
+			view_toggle_btn.text = "▲ %s" % mode_name
+		if OS.has_feature("web"):
+			var win = JavaScriptBridge.get_interface("window")
+			if win:
+				win.updateCampusHtmlHud(JSON.stringify({"view_label": mode_name}))
+
+
+func open_campus_opportunity_modal(idx: int = -1) -> void:
+	if not opportunity_modal:
+		_create_opportunity_modal_ui()
+	if idx >= 0 and idx < CAMPUS_OPPORTUNITIES.size():
+		current_opportunity_idx = idx
+	else:
+		current_opportunity_idx = (current_opportunity_idx + 1) % CAMPUS_OPPORTUNITIES.size()
+	var opp: Dictionary = CAMPUS_OPPORTUNITIES[current_opportunity_idx]
+	var t_lbl: Label = opportunity_modal.find_child("OppTitleLabel", true, false) as Label
+	var d_lbl: Label = opportunity_modal.find_child("OppDescLabel", true, false) as Label
+	var btn_a: Button = opportunity_modal.find_child("OppChoiceABtn", true, false) as Button
+	var btn_b: Button = opportunity_modal.find_child("OppChoiceBBtn", true, false) as Button
+	if t_lbl:
+		t_lbl.text = String(opp.get("title", "★ CAMPUS OPPORTUNITY"))
+	if d_lbl:
+		d_lbl.text = String(opp.get("desc", ""))
+	if btn_a:
+		btn_a.text = "➔ " + String(opp.get("choice_a", "Option A"))
+	if btn_b:
+		btn_b.text = "➔ " + String(opp.get("choice_b", "Option B"))
+	if tasks_sheet:
+		tasks_sheet.visible = false
+	opportunity_modal.visible = true
+
+
+func _resolve_opportunity_choice(is_choice_a: bool) -> void:
+	if SoundManager:
+		SoundManager.play_coin()
+	if opportunity_modal:
+		opportunity_modal.visible = false
+	var opp: Dictionary = CAMPUS_OPPORTUNITIES[clampi(current_opportunity_idx, 0, CAMPUS_OPPORTUNITIES.size() - 1)]
+	var eff: Dictionary = opp.get("effect_a" if is_choice_a else "effect_b", {})
+	var cur_scene: Node = get_tree().current_scene if get_tree() else null
+	var p: Node = cur_scene.get_node_or_null("Player3D") if cur_scene else null
+	if p:
+		var needs: NeedsManager = p.get_node_or_null("NeedsManager") as NeedsManager
+		if needs:
+			if eff.has("money"):
+				needs.modify_money(int(eff["money"]))
+			if eff.has("cgpa"):
+				needs.modify_cgpa(float(eff["cgpa"]))
+			if eff.has("energy"):
+				needs.modify_energy(float(eff["energy"]))
+			if eff.has("hunger"):
+				needs.modify_hunger(float(eff["hunger"]))
+			if eff.has("faith"):
+				needs.modify_faith(float(eff["faith"]))
+			StudentProfile.money = needs.money
+			StudentProfile.cgpa = needs.cgpa
+			StudentProfile.save_to_disk()
+		var msg: String = String(eff.get("msg", "Campus opportunity completed!"))
+		if p.has_method("display_notification"):
+			p.display_notification(msg)
+		show_event_banner("★ OPPORTUNITY COMPLETED", msg)
+
+
+func _create_opportunity_modal_ui() -> void:
+	if opportunity_modal:
+		return
+	opportunity_modal = PanelContainer.new()
+	opportunity_modal.name = "OpportunityModal"
+	opportunity_modal.custom_minimum_size = Vector2(500, 320)
+	opportunity_modal.anchors_preset = Control.PRESET_CENTER
+	opportunity_modal.anchor_left = 0.5
+	opportunity_modal.anchor_top = 0.5
+	opportunity_modal.anchor_right = 0.5
+	opportunity_modal.anchor_bottom = 0.5
+	opportunity_modal.offset_left = -250.0
+	opportunity_modal.offset_top = -170.0
+	opportunity_modal.offset_right = 250.0
+	opportunity_modal.offset_bottom = 170.0
+	opportunity_modal.visible = false
+
+	var st := StyleBoxFlat.new()
+	st.bg_color = Color(0.06, 0.12, 0.18, 0.98)
+	st.border_width_left = 3
+	st.border_width_top = 3
+	st.border_width_right = 3
+	st.border_width_bottom = 3
+	st.border_color = Color(1.0, 0.84, 0.22, 0.98)
+	st.corner_radius_top_left = 16
+	st.corner_radius_top_right = 16
+	st.corner_radius_bottom_left = 16
+	st.corner_radius_bottom_right = 16
+	st.content_margin_left = 18.0
+	st.content_margin_right = 18.0
+	st.content_margin_top = 16.0
+	st.content_margin_bottom = 16.0
+	opportunity_modal.add_theme_stylebox_override(&"panel", st)
+
+	var vbox := VBoxContainer.new()
+	vbox.add_theme_constant_override(&"separation", 12)
+	opportunity_modal.add_child(vbox)
+
+	var t_lbl := Label.new()
+	t_lbl.name = "OppTitleLabel"
+	t_lbl.text = "★ CAMPUS OPPORTUNITY"
+	t_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	t_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	t_lbl.add_theme_font_size_override(&"font_size", 17)
+	t_lbl.add_theme_color_override(&"font_color", Color(1.0, 0.88, 0.28))
+	vbox.add_child(t_lbl)
+
+	var d_lbl := Label.new()
+	d_lbl.name = "OppDescLabel"
+	d_lbl.text = "Make a wholesome decision on campus!"
+	d_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	d_lbl.add_theme_font_size_override(&"font_size", 14)
+	d_lbl.add_theme_color_override(&"font_color", Color(0.90, 0.95, 1.0))
+	vbox.add_child(d_lbl)
+
+	var btn_style_a := StyleBoxFlat.new()
+	btn_style_a.bg_color = Color(0.10, 0.42, 0.26, 0.96)
+	btn_style_a.border_width_left = 2
+	btn_style_a.border_width_top = 1
+	btn_style_a.border_width_right = 1
+	btn_style_a.border_width_bottom = 1
+	btn_style_a.border_color = Color(0.35, 0.95, 0.62, 0.9)
+	btn_style_a.corner_radius_top_left = 10
+	btn_style_a.corner_radius_top_right = 10
+	btn_style_a.corner_radius_bottom_left = 10
+	btn_style_a.corner_radius_bottom_right = 10
+	btn_style_a.content_margin_left = 12.0
+	btn_style_a.content_margin_right = 12.0
+	btn_style_a.content_margin_top = 10.0
+	btn_style_a.content_margin_bottom = 10.0
+
+	var btn_a := Button.new()
+	btn_a.name = "OppChoiceABtn"
+	btn_a.custom_minimum_size = Vector2(0, 48)
+	btn_a.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	btn_a.add_theme_font_size_override(&"font_size", 13)
+	btn_a.add_theme_stylebox_override(&"normal", btn_style_a)
+	btn_a.add_theme_stylebox_override(&"hover", btn_style_a)
+	btn_a.add_theme_stylebox_override(&"pressed", btn_style_a)
+	btn_a.pressed.connect(func(): _resolve_opportunity_choice(true))
+	vbox.add_child(btn_a)
+
+	var btn_style_b := btn_style_a.duplicate() as StyleBoxFlat
+	btn_style_b.bg_color = Color(0.14, 0.26, 0.44, 0.96)
+	btn_style_b.border_color = Color(0.45, 0.80, 1.0, 0.9)
+
+	var btn_b := Button.new()
+	btn_b.name = "OppChoiceBBtn"
+	btn_b.custom_minimum_size = Vector2(0, 48)
+	btn_b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	btn_b.add_theme_font_size_override(&"font_size", 13)
+	btn_b.add_theme_stylebox_override(&"normal", btn_style_b)
+	btn_b.add_theme_stylebox_override(&"hover", btn_style_b)
+	btn_b.add_theme_stylebox_override(&"pressed", btn_style_b)
+	btn_b.pressed.connect(func(): _resolve_opportunity_choice(false))
+	vbox.add_child(btn_b)
+
+	var close_opp := Button.new()
+	close_opp.text = "✕ Dismiss for Now"
+	close_opp.custom_minimum_size = Vector2(0, 38)
+	close_opp.add_theme_font_size_override(&"font_size", 13)
+	close_opp.pressed.connect(func():
+		if SoundManager: SoundManager.play_click()
+		opportunity_modal.visible = false
+	)
+	vbox.add_child(close_opp)
+
+	add_child(opportunity_modal)
 
 
 func _create_tasks_sheet_ui() -> void:
@@ -332,6 +584,27 @@ func _populate_tasks_sheet() -> void:
 	story_vbox.add_child(ch_sub)
 	story_panel.add_child(story_vbox)
 	list_vbox.add_child(story_panel)
+
+	# 1B. Live Interactive Campus Opportunity Button
+	var opp_btn := Button.new()
+	opp_btn.text = "★ LIVE CAMPUS OPPORTUNITY / DILEMMA (TAP TO RESPOND)"
+	opp_btn.custom_minimum_size = Vector2(0, 40)
+	opp_btn.add_theme_font_size_override(&"font_size", 13)
+	opp_btn.add_theme_color_override(&"font_color", Color(0.06, 0.12, 0.08))
+	var opp_style := StyleBoxFlat.new()
+	opp_style.bg_color = Color(1.0, 0.84, 0.22, 0.98)
+	opp_style.corner_radius_top_left = 10
+	opp_style.corner_radius_top_right = 10
+	opp_style.corner_radius_bottom_left = 10
+	opp_style.corner_radius_bottom_right = 10
+	opp_btn.add_theme_stylebox_override(&"normal", opp_style)
+	opp_btn.add_theme_stylebox_override(&"hover", opp_style)
+	opp_btn.add_theme_stylebox_override(&"pressed", opp_style)
+	opp_btn.pressed.connect(func():
+		if SoundManager: SoundManager.play_click()
+		open_campus_opportunity_modal()
+	)
+	list_vbox.add_child(opp_btn)
 
 	# 2. Fun Campus Loops Quick-Jump Row
 	var fun_row := HBoxContainer.new()
