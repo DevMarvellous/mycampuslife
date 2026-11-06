@@ -421,11 +421,131 @@ html, body, #canvas {
 	transform: translateY(-1px);
 }
 
-.chip-btn:active, .chip-btn.selected {
+.chip-btn:active, .chip-btn.selected, .chip-btn.active {
 	background: var(--campus-gold);
 	color: #0b2217;
 	border-color: var(--campus-gold);
 	font-weight: 700;
+	box-shadow: 0 0 10px rgba(245, 197, 24, 0.3);
+}
+
+/* Custom Styled Range Sliders */
+input[type="range"] {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 100%;
+	height: 8px;
+	border-radius: 6px;
+	background: rgba(255, 255, 255, 0.12);
+	outline: none;
+	transition: background 0.2s ease;
+	cursor: pointer;
+}
+
+input[type="range"]:hover {
+	background: rgba(255, 255, 255, 0.22);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	background: var(--campus-gold);
+	border: 2px solid #064e3b;
+	cursor: pointer;
+	box-shadow: 0 0 12px rgba(245, 197, 24, 0.7);
+	transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+	transform: scale(1.22);
+}
+
+input[type="range"]::-moz-range-thumb {
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	background: var(--campus-gold);
+	border: 2px solid #064e3b;
+	cursor: pointer;
+	box-shadow: 0 0 12px rgba(245, 197, 24, 0.7);
+	transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Settings Navigation Tabs */
+.settings-nav {
+	display: flex;
+	gap: 6px;
+	border-bottom: 1.5px solid rgba(52, 211, 153, 0.2);
+	padding: 10px 14px 8px 14px;
+	overflow-x: auto;
+	scrollbar-width: none;
+	background: rgba(8, 18, 13, 0.85);
+	flex-shrink: 0;
+}
+
+.settings-nav::-webkit-scrollbar {
+	display: none;
+}
+
+.settings-tab-btn {
+	background: transparent;
+	border: none;
+	color: #94a3b8;
+	font-size: 11px;
+	font-weight: 700;
+	padding: 6px 10px;
+	border-radius: 12px;
+	cursor: pointer;
+	white-space: nowrap;
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.settings-tab-btn:hover {
+	color: #f1f5f9;
+	background: rgba(52, 211, 153, 0.12);
+}
+
+.settings-tab-btn.active {
+	color: #0b2217;
+	background: var(--campus-gold);
+	font-weight: 800;
+	box-shadow: 0 2px 8px rgba(245, 197, 24, 0.35);
+}
+
+/* Keyboard Shortcut Badges */
+.kbd-key {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(30, 41, 59, 0.85);
+	border: 1px solid rgba(148, 163, 184, 0.4);
+	border-bottom: 2px solid rgba(148, 163, 184, 0.6);
+	color: #38bdf8;
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+	font-size: 11px;
+	font-weight: 700;
+	padding: 2px 8px;
+	border-radius: 6px;
+	min-width: 24px;
+	text-align: center;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+.shortcut-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 7px 10px;
+	background: rgba(255, 255, 255, 0.03);
+	border-radius: 8px;
+	border: 1px solid rgba(255, 255, 255, 0.05);
+	font-size: 12px;
 }
 
 /* Gender Toggle */
@@ -960,82 +1080,261 @@ html, body, #canvas {
 	</div>
 
 	<!-- 2F. Native HTML Game & Graphics Settings Modal -->
-	<div id="native-settings-overlay" style="position:fixed; top:0; left:0; right:0; bottom:0; z-index:80; background:rgba(0,0,0,0.72); display:none; align-items:center; justify-content:center; padding:16px; backdrop-filter:blur(8px);" onclick="if(event.target===this)closeNativeCampusSettings()">
-		<div style="background:rgba(10,20,16,0.98); border:2px solid #34d399; border-radius:18px; width:100%; max-width:440px; max-height:88vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 16px 48px rgba(0,0,0,0.9);">
-			<div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid rgba(52,211,153,0.3); background:rgba(16,42,30,0.95);">
-				<strong style="color:#34d399; font-size:15px;">⚙️ CAMPUS GAME &amp; GRAPHICS SETTINGS</strong>
-				<button type="button" onclick="closeNativeCampusSettings()" style="background:transparent; border:none; color:#cbd5e1; font-size:20px; cursor:pointer;">✕</button>
+	<div id="native-settings-overlay" style="position:fixed; top:0; left:0; right:0; bottom:0; z-index:80; background:rgba(0,0,0,0.78); display:none; align-items:center; justify-content:center; padding:14px; backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);" onclick="if(event.target===this)closeNativeCampusSettings()">
+		<div style="background:rgba(9,20,15,0.96); border:1.5px solid rgba(52,211,153,0.38); border-radius:20px; width:100%; max-width:480px; max-height:90vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 24px 64px rgba(0,0,0,0.9), 0 0 32px rgba(16,185,129,0.15);">
+			
+			<!-- Modal Header -->
+			<div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1.5px solid rgba(52,211,153,0.25); background:linear-gradient(180deg, rgba(16,50,34,0.95) 0%, rgba(10,28,20,0.95) 100%);">
+				<div style="display:flex; align-items:center; gap:8px;">
+					<span style="font-size:18px;">⚙️</span>
+					<div>
+						<div style="color:#34d399; font-weight:900; font-size:14px; letter-spacing:0.5px;">CAMPUS SETTINGS &amp; PREFERENCES</div>
+						<div style="color:#94a3b8; font-size:11px;">Audio, graphics, controls &amp; student records</div>
+					</div>
+				</div>
+				<button type="button" onclick="closeNativeCampusSettings()" style="background:rgba(255,255,255,0.08); border:none; color:#cbd5e1; font-size:16px; border-radius:50%; width:28px; height:28px; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
 			</div>
-			<div style="padding:16px; overflow-y:auto; display:flex; flex-direction:column; gap:14px; color:#f1f5f9;">
-				<div id="settings-profile-info" style="font-size:12px; color:#38bdf8; font-weight:700; background:rgba(15,23,42,0.6); padding:8px 12px; border-radius:8px; border:1px solid rgba(56,189,248,0.3);">
-					Student Profile Info
-				</div>
-				<div>
-					<label style="font-size:12px; color:#94a3b8; font-weight:700; display:block; margin-bottom:6px;">GRAPHICS QUALITY (LAG &amp; BATTERY OPTIMIZER):</label>
-					<div style="display:flex; gap:8px;">
-						<button type="button" id="gfx-low-btn" class="chip-btn" style="flex:1; padding:8px;" onclick="setGraphicsQuality('low')">⚡ Low (60 FPS)</button>
-						<button type="button" id="gfx-balanced-btn" class="chip-btn active" style="flex:1; padding:8px;" onclick="setGraphicsQuality('balanced')">⚖️ Balanced</button>
-						<button type="button" id="gfx-high-btn" class="chip-btn" style="flex:1; padding:8px;" onclick="setGraphicsQuality('high')">✨ High Drip</button>
+
+			<!-- Navigation Tabs Bar -->
+			<div class="settings-nav">
+				<button type="button" id="settings-tab-btn-graphics" class="settings-tab-btn active" onclick="switchSettingsTab('graphics')">⚙️ Graphics &amp; Cam</button>
+				<button type="button" id="settings-tab-btn-audio" class="settings-tab-btn" onclick="switchSettingsTab('audio')">🔊 Audio</button>
+				<button type="button" id="settings-tab-btn-controls" class="settings-tab-btn" onclick="switchSettingsTab('controls')">🎮 Controls</button>
+				<button type="button" id="settings-tab-btn-data" class="settings-tab-btn" onclick="switchSettingsTab('data')">💾 Student Save</button>
+				<button type="button" id="settings-tab-btn-about" class="settings-tab-btn" onclick="switchSettingsTab('about')">ℹ️ About Studio</button>
+			</div>
+
+			<!-- Modal Body (Tab Panes) -->
+			<div style="padding:16px; overflow-y:auto; display:flex; flex-direction:column; gap:14px; color:#f1f5f9; flex:1;">
+				
+				<!-- Tab 1: Graphics & Camera -->
+				<div id="settings-pane-graphics" style="display:flex; flex-direction:column; gap:14px;">
+					<div id="settings-profile-info" style="font-size:12px; color:#38bdf8; font-weight:700; background:rgba(15,23,42,0.7); padding:8px 12px; border-radius:10px; border:1px solid rgba(56,189,248,0.3); display:flex; align-items:center; gap:8px;">
+						<span>🎓</span>
+						<span id="settings-profile-text">Student Profile Info</span>
+					</div>
+
+					<div>
+						<label style="font-size:11px; color:#94a3b8; font-weight:800; letter-spacing:0.5px; display:block; margin-bottom:6px;">GRAPHICS QUALITY (LAG &amp; BATTERY OPTIMIZER):</label>
+						<div style="display:flex; gap:8px;">
+							<button type="button" id="gfx-low-btn" class="chip-btn" style="flex:1; padding:9px 6px; font-size:11px;" onclick="setGraphicsQuality('low')">⚡ Low (60 FPS)</button>
+							<button type="button" id="gfx-balanced-btn" class="chip-btn active" style="flex:1; padding:9px 6px; font-size:11px;" onclick="setGraphicsQuality('balanced')">⚖️ Balanced</button>
+							<button type="button" id="gfx-high-btn" class="chip-btn" style="flex:1; padding:9px 6px; font-size:11px;" onclick="setGraphicsQuality('high')">✨ High Drip</button>
+						</div>
+						<div style="font-size:11px; color:#64748b; margin-top:5px; line-height:1.3;">
+							Tip: Choose ⚡ Low for smooth 60 FPS on older phones or laptop battery savings.
+						</div>
+					</div>
+
+					<div>
+						<label style="font-size:11px; color:#94a3b8; font-weight:800; letter-spacing:0.5px; display:block; margin-bottom:6px;">CAMERA ANGLE PERSPECTIVE:</label>
+						<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+							<button type="button" id="cam-preset-0" class="chip-btn" style="padding:9px;" onclick="setCameraPreset(0)">📷 Top View</button>
+							<button type="button" id="cam-preset-1" class="chip-btn" style="padding:9px;" onclick="setCameraPreset(1)">📸 Classic Angle</button>
+							<button type="button" id="cam-preset-2" class="chip-btn" style="padding:9px;" onclick="setCameraPreset(2)">🎥 3D Perspective</button>
+							<button type="button" id="cam-preset-3" class="chip-btn" style="padding:9px;" onclick="setCameraPreset(3)">🔍 Close Follow</button>
+							<button type="button" id="cam-preset-4" class="chip-btn" style="padding:9px; grid-column:span 2;" onclick="setCameraPreset(4)">🌍 Wide Campus Overview</button>
+						</div>
 					</div>
 				</div>
-				<div>
-					<label style="font-size:12px; color:#94a3b8; font-weight:700; display:block; margin-bottom:6px;">CAMERA ANGLE PERSPECTIVE:</label>
-					<div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-						<button type="button" id="cam-preset-0" class="chip-btn" style="padding:8px;" onclick="setCameraPreset(0)">📷 Top View</button>
-						<button type="button" id="cam-preset-1" class="chip-btn" style="padding:8px;" onclick="setCameraPreset(1)">📸 Classic Angle</button>
-						<button type="button" id="cam-preset-2" class="chip-btn" style="padding:8px;" onclick="setCameraPreset(2)">🎥 3D Perspective</button>
-						<button type="button" id="cam-preset-3" class="chip-btn" style="padding:8px;" onclick="setCameraPreset(3)">🔍 Close Follow</button>
-						<button type="button" id="cam-preset-4" class="chip-btn" style="padding:8px; grid-column:span 2;" onclick="setCameraPreset(4)">🌍 Wide Campus Overview</button>
+
+				<!-- Tab 2: Audio Volume Controls -->
+				<div id="settings-pane-audio" style="display:none; flex-direction:column; gap:14px;">
+					<div style="display:flex; justify-content:space-between; align-items:center;">
+						<label style="font-size:11px; color:#94a3b8; font-weight:800; letter-spacing:0.5px;">AUDIO BUS LEVELS:</label>
+						<button type="button" id="audio-mute-toggle-btn" class="chip-btn" style="padding:4px 10px; font-size:11px;" onclick="toggleAudioMute()">🔇 Quick Mute All</button>
+					</div>
+
+					<div style="display:flex; flex-direction:column; gap:12px; background:rgba(255,255,255,0.03); padding:14px; border-radius:12px; border:1px solid rgba(255,255,255,0.06);">
+						<div>
+							<div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:6px;">
+								<span style="font-weight:700; color:#e2e8f0;">🔊 Master Volume</span>
+								<span id="vol-master-val" style="color:var(--campus-gold); font-weight:800; font-family:monospace;">90%</span>
+							</div>
+							<input id="vol-master-slider" type="range" min="0" max="100" value="90" oninput="setAudioBusVolume('master', this.value)" />
+						</div>
+
+						<div>
+							<div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:6px;">
+								<span style="font-weight:700; color:#e2e8f0;">🎵 Music &amp; Radio</span>
+								<span id="vol-music-val" style="color:var(--campus-gold); font-weight:800; font-family:monospace;">80%</span>
+							</div>
+							<input id="vol-music-slider" type="range" min="0" max="100" value="80" oninput="setAudioBusVolume('music', this.value)" />
+						</div>
+
+						<div>
+							<div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:6px;">
+								<span style="font-weight:700; color:#e2e8f0;">🔔 SFX &amp; Ambient</span>
+								<span id="vol-sfx-val" style="color:var(--campus-gold); font-weight:800; font-family:monospace;">90%</span>
+							</div>
+							<input id="vol-sfx-slider" type="range" min="0" max="100" value="90" oninput="setAudioBusVolume('sfx', this.value)" />
+						</div>
+					</div>
+
+					<div style="font-size:11px; color:#64748b; line-height:1.4;">
+						All procedural audio streams are generated synthetically in memory with zero external network downloads.
 					</div>
 				</div>
-				<div>
-					<label style="font-size:12px; color:#94a3b8; font-weight:700; display:block; margin-bottom:6px;">AUDIO VOLUME CONTROLS:</label>
+
+				<!-- Tab 3: Controls & Shortcuts -->
+				<div id="settings-pane-controls" style="display:none; flex-direction:column; gap:10px;">
+					<label style="font-size:11px; color:#94a3b8; font-weight:800; letter-spacing:0.5px;">DESKTOP KEYBOARD SHORTCUTS:</label>
+					
+					<div style="display:flex; flex-direction:column; gap:6px;">
+						<div class="shortcut-row">
+							<span>Walk / Movement</span>
+							<div style="display:flex; gap:4px;"><span class="kbd-key">W</span><span class="kbd-key">A</span><span class="kbd-key">S</span><span class="kbd-key">D</span> or <span class="kbd-key">Arrows</span></div>
+						</div>
+						<div class="shortcut-row">
+							<span>Sprint / Run</span>
+							<span class="kbd-key">Shift</span>
+						</div>
+						<div class="shortcut-row">
+							<span>Jump / Action</span>
+							<span class="kbd-key">Space</span>
+						</div>
+						<div class="shortcut-row">
+							<span>Interact with NPCs, Doors &amp; Desks</span>
+							<div style="display:flex; gap:4px;"><span class="kbd-key">E</span> or <span class="kbd-key">Enter</span></div>
+						</div>
+						<div class="shortcut-row">
+							<span>Campus Live Chat</span>
+							<div style="display:flex; gap:4px;"><span class="kbd-key">T</span> or <span class="kbd-key">Enter</span></div>
+						</div>
+						<div class="shortcut-row">
+							<span>Campus Map &amp; Fast Travel</span>
+							<span class="kbd-key">M</span>
+						</div>
+						<div class="shortcut-row">
+							<span>Wardrobe &amp; Drip Studio</span>
+							<span class="kbd-key">C</span>
+						</div>
+						<div class="shortcut-row">
+							<span>Camera Zoom &amp; Perspective</span>
+							<div style="display:flex; gap:4px;"><span class="kbd-key">Mouse Wheel</span> or <span class="kbd-key">V</span></div>
+						</div>
+						<div class="shortcut-row">
+							<span>Pause / Settings</span>
+							<span class="kbd-key">Esc</span>
+						</div>
+					</div>
+
+					<div style="font-size:11px; color:#94a3b8; background:rgba(255,255,255,0.03); padding:8px 10px; border-radius:8px; border:1px solid rgba(255,255,255,0.05); margin-top:4px;">
+						📱 <strong>Mobile Controls:</strong> Use the on-screen virtual joystick on the left to walk, and tap the HUD buttons on the right to interact, emote, or travel.
+					</div>
+				</div>
+
+				<!-- Tab 4: Student Save & Data -->
+				<div id="settings-pane-data" style="display:none; flex-direction:column; gap:12px;">
+					<label style="font-size:11px; color:#94a3b8; font-weight:800; letter-spacing:0.5px;">STUDENT PROFILE &amp; BACKUP:</label>
+					
+					<div style="background:rgba(16,42,30,0.8); border:1px solid rgba(52,211,153,0.3); border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:6px; font-size:12px;">
+						<div style="display:flex; justify-content:space-between; align-items:center;">
+							<strong id="save-student-name" style="color:var(--campus-gold); font-size:13px;">Tunde Adeleke</strong>
+							<span id="save-student-dept" style="color:#34d399; font-weight:700;">CSC • 100L</span>
+						</div>
+						<div style="color:#cbd5e1; font-size:11px;">
+							Matric No: <span id="save-student-matric" style="color:#38bdf8; font-family:monospace;">CSC/2026/042</span>
+						</div>
+						<div style="display:flex; gap:12px; margin-top:4px; color:#94a3b8; font-size:11px;">
+							<span>CGPA: <strong id="save-student-cgpa" style="color:#fff;">3.50</strong></span>
+							<span>Wallet: <strong id="save-student-wallet" style="color:#fff;">₦5,000</strong></span>
+							<span>Streak: <strong id="save-student-streak" style="color:#fff;">1 Day</strong></span>
+						</div>
+					</div>
+
 					<div style="display:flex; flex-direction:column; gap:8px;">
-						<div style="display:flex; align-items:center; gap:8px; font-size:12px;">
-							<span style="width:70px;">Master:</span>
-							<input id="vol-master-slider" type="range" min="0" max="100" value="90" style="flex:1;" oninput="setAudioBusVolume('master', this.value)" />
-						</div>
-						<div style="display:flex; align-items:center; gap:8px; font-size:12px;">
-							<span style="width:70px;">Music:</span>
-							<input id="vol-music-slider" type="range" min="0" max="100" value="80" style="flex:1;" oninput="setAudioBusVolume('music', this.value)" />
-						</div>
-						<div style="display:flex; align-items:center; gap:8px; font-size:12px;">
-							<span style="width:70px;">SFX:</span>
-							<input id="vol-sfx-slider" type="range" min="0" max="100" value="90" style="flex:1;" oninput="setAudioBusVolume('sfx', this.value)" />
-						</div>
+						<button type="button" class="btn-primary" style="height:40px; font-size:12px;" onclick="exportStudentRecordJSON()">
+							💾 Export Student Record (.json)
+						</button>
+						
+						<label class="btn-secondary" style="height:40px; font-size:12px; display:flex; align-items:center; justify-content:center; cursor:pointer; margin:0;">
+							📂 Restore Record from .json
+							<input type="file" accept=".json,application/json" style="display:none;" onchange="if(this.files &amp;&amp; this.files[0]) importStudentRecordJSON(this.files[0])" />
+						</label>
+					</div>
+
+					<div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:10px; display:flex; flex-direction:column; gap:8px;">
+						<button type="button" class="btn-secondary" style="height:38px; font-size:12px;" onclick="switchCampusAccount()">
+							🔄 Switch Student Account
+						</button>
+						<button type="button" style="height:36px; background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3); color:#fca5a5; border-radius:10px; font-size:11px; font-weight:700; cursor:pointer;" onclick="confirmResetStudentData()">
+							⚠️ Clear Local Progress &amp; Reset Student
+						</button>
 					</div>
 				</div>
-				<div style="display:flex; gap:8px; margin-top:6px;">
-					<button type="button" class="btn-secondary" style="height:40px; flex:1;" onclick="switchCampusAccount()">🔄 Switch Student Account</button>
-					<button type="button" class="btn-primary" style="height:40px; flex:1;" onclick="closeNativeCampusSettings()">Done ✓</button>
+
+				<!-- Tab 5: About Studio & Credits -->
+				<div id="settings-pane-about" style="display:none; flex-direction:column; gap:12px;">
+					<div style="text-align:center; padding:10px 0;">
+						<div style="font-size:22px; margin-bottom:4px;">🎓</div>
+						<div style="font-size:16px; font-weight:900; color:var(--campus-gold); letter-spacing:0.5px;">MY CAMPUS LIFE 3D</div>
+						<div style="font-size:11px; color:#34d399; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-top:2px;">Production Release v2.5.0</div>
+					</div>
+
+					<div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:8px; font-size:12px;">
+						<div style="display:flex; justify-content:space-between;">
+							<span style="color:#94a3b8;">Lead Developer:</span>
+							<strong style="color:#f1f5f9;">Marvellous Adepoju</strong>
+						</div>
+						<div style="display:flex; justify-content:space-between;">
+							<span style="color:#94a3b8;">Studio / Brand:</span>
+							<strong style="color:var(--campus-gold);">Marvel Develops</strong>
+						</div>
+						<div style="display:flex; justify-content:space-between;">
+							<span style="color:#94a3b8;">Website:</span>
+							<a href="https://marveldevelops.com" target="_blank" rel="noopener" style="color:#38bdf8; text-decoration:underline; font-weight:700;">marveldevelops.com ↗</a>
+						</div>
+						<div style="display:flex; justify-content:space-between;">
+							<span style="color:#94a3b8;">Engine:</span>
+							<span style="color:#cbd5e1;">Godot 4.7 &amp; WebAssembly</span>
+						</div>
+					</div>
+
+					<div style="background:rgba(16,42,30,0.6); border:1px solid rgba(52,211,153,0.3); border-radius:10px; padding:10px; font-size:11px; color:#a7f3d0; line-height:1.45;">
+						✝️ <strong>Wholesome Values Commitment:</strong> Built with strict family-safe, Christian ethical standards. Pure campus academic hustle, fellowship, healthy student entrepreneurship, and zero gambling/wagering.
+					</div>
 				</div>
+
 			</div>
+
+			<!-- Modal Footer -->
+			<div style="display:flex; gap:8px; padding:12px 18px; border-top:1.5px solid rgba(52,211,153,0.2); background:rgba(8,18,13,0.95); flex-shrink:0;">
+				<button type="button" class="btn-primary" style="height:42px; width:100%; font-size:13px; font-weight:800;" onclick="closeNativeCampusSettings()">Done ✓</button>
+			</div>
+
 		</div>
 	</div>
 
 	<!-- 2G. Native HTML SUG Senate Feedback Modal -->
-	<div id="native-feedback-overlay" style="position:fixed; top:0; left:0; right:0; bottom:0; z-index:80; background:rgba(0,0,0,0.72); display:none; align-items:center; justify-content:center; padding:16px; backdrop-filter:blur(8px);" onclick="if(event.target===this)closeNativeCampusFeedback()">
-		<div style="background:rgba(10,20,16,0.98); border:2px solid #f5c518; border-radius:18px; width:100%; max-width:440px; max-height:88vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 16px 48px rgba(0,0,0,0.9);">
-			<div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1px solid rgba(245,197,24,0.3); background:rgba(28,24,12,0.95);">
-				<strong style="color:#f5c518; font-size:15px;">💬 SUG SENATE &amp; DEV FEEDBACK MEMO</strong>
-				<button type="button" onclick="closeNativeCampusFeedback()" style="background:transparent; border:none; color:#cbd5e1; font-size:20px; cursor:pointer;">✕</button>
+	<div id="native-feedback-overlay" style="position:fixed; top:0; left:0; right:0; bottom:0; z-index:80; background:rgba(0,0,0,0.78); display:none; align-items:center; justify-content:center; padding:14px; backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);" onclick="if(event.target===this)closeNativeCampusFeedback()">
+		<div style="background:rgba(14,20,12,0.96); border:1.5px solid #f5c518; border-radius:20px; width:100%; max-width:460px; max-height:88vh; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 24px 64px rgba(0,0,0,0.9), 0 0 28px rgba(245,197,24,0.18);">
+			<div style="display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border-bottom:1.5px solid rgba(245,197,24,0.3); background:linear-gradient(180deg, rgba(38,32,14,0.95) 0%, rgba(20,18,10,0.95) 100%);">
+				<div style="display:flex; align-items:center; gap:8px;">
+					<span style="font-size:18px;">💬</span>
+					<div>
+						<div style="color:#f5c518; font-weight:900; font-size:14px; letter-spacing:0.5px;">SUG SENATE &amp; DEV FEEDBACK</div>
+						<div style="color:#cbd5e1; font-size:11px;">Share ideas, bug reports, and campus improvements</div>
+					</div>
+				</div>
+				<button type="button" onclick="closeNativeCampusFeedback()" style="background:rgba(255,255,255,0.08); border:none; color:#cbd5e1; font-size:16px; border-radius:50%; width:28px; height:28px; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
 			</div>
 			<div style="padding:16px; overflow-y:auto; display:flex; flex-direction:column; gap:12px; color:#f1f5f9;">
-				<div style="font-size:12px; color:#cbd5e1; line-height:1.4;">
-					Have an idea, found a bug, or want a new campus landmark? Send your memo directly to the Student Union &amp; Dev Team!
+				<div style="font-size:12px; color:#cbd5e1; line-height:1.45;">
+					Have an idea, found a bug, or want a new campus landmark? Send your memo directly to Comrade Ojo and Marvellous Adepoju!
 				</div>
 				<div>
-					<label style="font-size:12px; color:#94a3b8; font-weight:700; display:block; margin-bottom:6px;">STAR RATING:</label>
-					<div style="font-size:24px; cursor:pointer; letter-spacing:4px;" id="feedback-stars-row">
-						<span id="star-1" onclick="setFeedbackRating(1)">★</span>
-						<span id="star-2" onclick="setFeedbackRating(2)">★</span>
-						<span id="star-3" onclick="setFeedbackRating(3)">★</span>
-						<span id="star-4" onclick="setFeedbackRating(4)">★</span>
-						<span id="star-5" onclick="setFeedbackRating(5)">★</span>
+					<label style="font-size:11px; color:#94a3b8; font-weight:800; letter-spacing:0.5px; display:block; margin-bottom:6px;">STAR RATING:</label>
+					<div style="font-size:26px; cursor:pointer; letter-spacing:6px;" id="feedback-stars-row">
+						<span id="star-1" onclick="setFeedbackRating(1)" style="transition:transform 0.1s;">★</span>
+						<span id="star-2" onclick="setFeedbackRating(2)" style="transition:transform 0.1s;">★</span>
+						<span id="star-3" onclick="setFeedbackRating(3)" style="transition:transform 0.1s;">★</span>
+						<span id="star-4" onclick="setFeedbackRating(4)" style="transition:transform 0.1s;">★</span>
+						<span id="star-5" onclick="setFeedbackRating(5)" style="transition:transform 0.1s;">★</span>
 					</div>
 				</div>
 				<div>
-					<label style="font-size:12px; color:#94a3b8; font-weight:700; display:block; margin-bottom:6px;">MEMO CATEGORY:</label>
+					<label style="font-size:11px; color:#94a3b8; font-weight:800; letter-spacing:0.5px; display:block; margin-bottom:6px;">MEMO CATEGORY:</label>
 					<div style="display:flex; gap:6px; flex-wrap:wrap;">
 						<button type="button" id="fb-cat-bug" class="chip-btn active" style="padding:6px 12px; font-size:11px;" onclick="setFeedbackCategory('bug')">🐛 Bug</button>
 						<button type="button" id="fb-cat-gameplay" class="chip-btn" style="padding:6px 12px; font-size:11px;" onclick="setFeedbackCategory('gameplay')">🎮 Gameplay</button>
@@ -1045,7 +1344,7 @@ html, body, #canvas {
 					</div>
 				</div>
 				<div>
-					<label for="feedback-text-input" style="font-size:12px; color:#94a3b8; font-weight:700; display:block; margin-bottom:6px;">YOUR MEMO / MESSAGE:</label>
+					<label for="feedback-text-input" style="font-size:11px; color:#94a3b8; font-weight:800; letter-spacing:0.5px; display:block; margin-bottom:6px;">YOUR MEMO / MESSAGE:</label>
 					<textarea id="feedback-text-input" class="portal-input" rows="4" style="height:90px; resize:none; padding:10px; font-size:13px;" placeholder="Describe what you experienced or what feature you want added..."></textarea>
 				</div>
 				<div id="feedback-status-msg" style="font-size:12px; min-height:18px;"></div>
@@ -2399,16 +2698,41 @@ window.showCampusHtmlToast = function(title, desc) {
 /* =======================================================
    NATIVE HTML GAME & GRAPHICS SETTINGS CONTROLS
    ======================================================= */
+window.switchSettingsTab = function(tabName) {
+	const tabs = ['graphics', 'audio', 'controls', 'data', 'about'];
+	tabs.forEach(t => {
+		const btn = document.getElementById('settings-tab-btn-' + t);
+		const pane = document.getElementById('settings-pane-' + t);
+		if (btn) btn.classList.toggle('active', t === tabName);
+		if (pane) pane.style.display = (t === tabName) ? 'flex' : 'none';
+	});
+};
+
 window.openNativeCampusSettings = function() {
 	const modal = document.getElementById('native-settings-overlay');
 	if (!modal) return;
 	modal.style.display = 'flex';
+	window.switchSettingsTab('graphics');
 
-	const profInfo = document.getElementById('settings-profile-info');
-	if (profInfo) {
+	const profText = document.getElementById('settings-profile-text');
+	if (profText) {
 		const guestTag = ADMISSION_STATE.isGuest ? ' (Guest Fresher)' : '';
-		profInfo.textContent = `${ADMISSION_STATE.name} • ${ADMISSION_STATE.username}${guestTag}`;
+		profText.textContent = `${ADMISSION_STATE.name} • ${ADMISSION_STATE.username}${guestTag}`;
 	}
+
+	// Update Data Tab fields
+	const sName = document.getElementById('save-student-name');
+	const sDept = document.getElementById('save-student-dept');
+	const sMatric = document.getElementById('save-student-matric');
+	const sCgpa = document.getElementById('save-student-cgpa');
+	const sWallet = document.getElementById('save-student-wallet');
+	const sStreak = document.getElementById('save-student-streak');
+	if (sName) sName.textContent = ADMISSION_STATE.name || 'Tunde Adeleke';
+	if (sDept) sDept.textContent = (ADMISSION_STATE.dept || 'CSC') + ' • 100L';
+	if (sMatric) sMatric.textContent = ADMISSION_STATE.matricNo || 'CSC/2026/042';
+	if (sCgpa) sCgpa.textContent = (typeof ADMISSION_STATE.cgpa === 'number') ? ADMISSION_STATE.cgpa.toFixed(2) : '3.50';
+	if (sWallet) sWallet.textContent = '₦' + (typeof ADMISSION_STATE.walletBalance === 'number' ? ADMISSION_STATE.walletBalance.toLocaleString() : '5,000');
+	if (sStreak) sStreak.textContent = (ADMISSION_STATE.attendanceStreak || 1) + ' Days';
 
 	try {
 		const q = localStorage.getItem('mcl_gfx_quality') || 'balanced';
@@ -2427,8 +2751,15 @@ window.openNativeCampusSettings = function() {
 		if (elMu) elMu.value = vMusic;
 		if (elS) elS.value = vSfx;
 
+		const valM = document.getElementById('vol-master-val');
+		const valMu = document.getElementById('vol-music-val');
+		const valS = document.getElementById('vol-sfx-val');
+		if (valM) valM.textContent = vMaster + '%';
+		if (valMu) valMu.textContent = vMusic + '%';
+		if (valS) valS.textContent = vSfx + '%';
+
 		const camIdx = parseInt(localStorage.getItem('mcl_cam_preset') || '0', 10);
-		[0, 1, 2, 3].forEach(idx => {
+		[0, 1, 2, 3, 4].forEach(idx => {
 			const b = document.getElementById('cam-preset-' + idx);
 			if (b) b.classList.toggle('active', idx === camIdx);
 		});
@@ -2451,17 +2782,113 @@ window.setGraphicsQuality = function(tier) {
 
 window.setAudioBusVolume = function(bus, val) {
 	try { localStorage.setItem('mcl_vol_' + bus, val); } catch (e) {}
+	const badge = document.getElementById('vol-' + bus + '-val');
+	if (badge) badge.textContent = val + '%';
 	const pct = (Number(val) / 100).toFixed(2);
 	window.triggerGodotHudAction('vol_' + bus + ':' + pct);
 };
 
+let _isAudioMuted = false;
+let _prevVolume = { master: 90, music: 80, sfx: 90 };
+
+window.toggleAudioMute = function() {
+	_isAudioMuted = !_isAudioMuted;
+	const btn = document.getElementById('audio-mute-toggle-btn');
+	if (_isAudioMuted) {
+		const elM = document.getElementById('vol-master-slider');
+		const elMu = document.getElementById('vol-music-slider');
+		const elS = document.getElementById('vol-sfx-slider');
+		_prevVolume.master = elM ? elM.value : 90;
+		_prevVolume.music = elMu ? elMu.value : 80;
+		_prevVolume.sfx = elS ? elS.value : 90;
+		window.setAudioBusVolume('master', 0);
+		window.setAudioBusVolume('music', 0);
+		window.setAudioBusVolume('sfx', 0);
+		if (elM) elM.value = 0;
+		if (elMu) elMu.value = 0;
+		if (elS) elS.value = 0;
+		if (btn) btn.innerHTML = '🔊 Unmute Audio';
+	} else {
+		window.setAudioBusVolume('master', _prevVolume.master);
+		window.setAudioBusVolume('music', _prevVolume.music);
+		window.setAudioBusVolume('sfx', _prevVolume.sfx);
+		const elM = document.getElementById('vol-master-slider');
+		const elMu = document.getElementById('vol-music-slider');
+		const elS = document.getElementById('vol-sfx-slider');
+		if (elM) elM.value = _prevVolume.master;
+		if (elMu) elMu.value = _prevVolume.music;
+		if (elS) elS.value = _prevVolume.sfx;
+		if (btn) btn.innerHTML = '🔇 Quick Mute All';
+	}
+};
+
 window.setCameraPreset = function(presetIdx) {
-	[0, 1, 2, 3].forEach(idx => {
+	[0, 1, 2, 3, 4].forEach(idx => {
 		const b = document.getElementById('cam-preset-' + idx);
 		if (b) b.classList.toggle('active', idx === presetIdx);
 	});
 	try { localStorage.setItem('mcl_cam_preset', presetIdx); } catch (e) {}
 	window.triggerGodotHudAction('camera:' + presetIdx);
+};
+
+window.exportStudentRecordJSON = function() {
+	try {
+		const studentData = {
+			...ADMISSION_STATE,
+			exported_at: new Date().toISOString(),
+			version: "2.5.0",
+			game: "My Campus Life 3D",
+			developer: "Marvellous Adepoju",
+			brand: "Marvel Develops",
+			website: "https://marveldevelops.com"
+		};
+		const blob = new Blob([JSON.stringify(studentData, null, 2)], { type: 'application/json' });
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		const uname = (ADMISSION_STATE.username || 'student').replace(/[^a-zA-Z0-9_-]/g, '');
+		a.href = url;
+		a.download = `mycampuslife_save_${uname}.json`;
+		document.body.appendChild(a);
+		a.click();
+		document.body.removeChild(a);
+		URL.revokeObjectURL(url);
+		window.showCampusHtmlToast('💾 Record Exported', 'Student save downloaded to device storage!');
+	} catch (e) {
+		alert('Could not export save file: ' + e.message);
+	}
+};
+
+window.importStudentRecordJSON = function(file) {
+	if (!file) return;
+	const reader = new FileReader();
+	reader.onload = function(e) {
+		try {
+			const data = JSON.parse(e.target.result);
+			if (!data.name && !data.username) {
+				alert('Invalid My Campus Life save file format.');
+				return;
+			}
+			Object.assign(ADMISSION_STATE, data);
+			localStorage.setItem('my_campus_saved_account', JSON.stringify(ADMISSION_STATE));
+			window.showCampusHtmlToast('✓ Record Restored', `Welcome back ${ADMISSION_STATE.name}! Reloading campus...`);
+			setTimeout(() => {
+				window.location.reload();
+			}, 1200);
+		} catch (err) {
+			alert('Failed to read backup file: ' + err.message);
+		}
+	};
+	reader.readAsText(file);
+};
+
+window.confirmResetStudentData = function() {
+	if (confirm('Are you sure you want to reset your local student record? This cannot be undone unless you exported a backup.')) {
+		try {
+			localStorage.removeItem('my_campus_saved_account');
+			localStorage.removeItem('mcl_offline_feedback');
+		} catch (e) {}
+		window.location.reload();
+	}
 };
 
 /* =======================================================

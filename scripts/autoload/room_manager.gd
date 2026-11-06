@@ -60,6 +60,7 @@ const ROOM_NAMES: Dictionary = {
 var current_room: StringName = &"admission"
 var is_transitioning: bool = false
 var _sanitize_timer: float = 0.0
+var _js_hud_callback: Variant = null
 
 
 func _ready() -> void:
@@ -69,6 +70,7 @@ func _ready() -> void:
 		add_child(transit_screen_instance)
 	get_tree().node_added.connect(_on_node_added_clean_text)
 	call_deferred("_sanitize_entire_tree")
+	_init_web_hud_bridge()
 
 
 func _process(delta: float) -> void:
@@ -265,3 +267,75 @@ func change_room_to_path(target_path: String, dest_name: String = "", target_roo
 		else:
 			push_error("Failed to load room scene: %s (Error %d)" % [target_path, err])
 		is_transitioning = false
+
+
+func _init_web_hud_bridge() -> void:
+	if not OS.has_feature("web"):
+		return
+	_js_hud_callback = JavaScriptBridge.create_callback(_on_web_hud_action)
+	var win = JavaScriptBridge.get_interface("window")
+	if win:
+		win.godotOnHtmlHudAction = _js_hud_callback
+
+
+func _on_web_hud_action(args: Array) -> void:
+	if args.is_empty():
+		return
+	var act: String = str(args[0])
+	var cur_scene: Node = get_tree().current_scene if get_tree() else null
+	var player: Node = cur_scene.get_node_or_null("Player3D") if cur_scene else null
+	var hud: Node = cur_scene.get_node_or_null("HUD") if cur_scene else null
+
+	if act == "objective":
+		if hud and hud.has_method("trigger_objective_click"):
+			hud.trigger_objective_click()
+	elif act == "view":
+		if hud and hud.has_method("_on_hud_view_toggle_pressed"):
+			hud._on_hud_view_toggle_pressed()
+		elif player and player.has_method("cycle_camera_zoom"):
+			player.cycle_camera_zoom()
+	elif act == "opportunity":
+		if hud and hud.has_method("open_campus_opportunity_modal"):
+			hud.open_campus_opportunity_modal()
+	elif act.begins_with("travel:"):
+		var dest: String = act.substr(7).strip_edges()
+		if not dest.is_empty():
+			change_room(StringName(dest), true)
+	elif act.begins_with("emote:"):
+		var em: String = act.substr(6).strip_edges()
+		if player and player.has_method("play_emote"):
+			player.play_emote(em)
+	elif act.begins_with("camera:"):
+		var cam_idx: int = int(act.substr(7).strip_edges())
+		if player and player.has_method("set_camera_zoom_preset"):
+			player.set_camera_zoom_preset(cam_idx, false)
+	elif act.begins_with("vol_master:"):
+		var pct: float = float(act.substr(11).strip_edges())
+		if SoundManager and SoundManager.has_method("set_master_volume"):
+			SoundManager.set_master_volume(pct)
+	elif act.begins_with("vol_music:"):
+		var pct: float = float(act.substr(10).strip_edges())
+		if SoundManager and SoundManager.has_method("set_music_volume"):
+			SoundManager.set_music_volume(pct)
+	elif act.begins_with("vol_sfx:"):
+		var pct: float = float(act.substr(8).strip_edges())
+		if SoundManager and SoundManager.has_method("set_sfx_volume"):
+			SoundManager.set_sfx_volume(pct)
+	elif act.begins_with("quality:"):
+		var tier: String = act.substr(8).strip_edges()
+		_apply_graphics_tier(tier)
+
+
+func _apply_graphics_tier(tier: String) -> void:
+	var vp_rid: RID = get_tree().root.get_viewport_rid()
+	match tier.to_lower():
+		"low":
+			RenderingServer.viewport_set_scaling_3d_scale(vp_rid, 0.80)
+			RenderingServer.viewport_set_msaa_3d(vp_rid, RenderingServer.VIEWPORT_MSAA_DISABLED)
+		"high":
+			RenderingServer.viewport_set_scaling_3d_scale(vp_rid, 1.0)
+			RenderingServer.viewport_set_msaa_3d(vp_rid, RenderingServer.VIEWPORT_MSAA_2X)
+		_: # balanced
+			RenderingServer.viewport_set_scaling_3d_scale(vp_rid, 1.0)
+			RenderingServer.viewport_set_msaa_3d(vp_rid, RenderingServer.VIEWPORT_MSAA_DISABLED)
+
