@@ -370,15 +370,17 @@ func interact(player: CharacterBody3D) -> void:
 		ObjectType.NOTICEBOARD:
 			StudentProfile.load_from_disk()
 			needs.modify_faith(15.0)
+			needs.modify_cgpa(0.03)
 			TimeSystem.advance_minutes(10)
 			if SoundManager:
 				SoundManager.play_click()
 			var lec_idx: int = Schedule.get_current_lecture_index()
-			var tip: String = "No lectures right now. Final exam revision is ongoing in the Library!"
+			var tip: String = "Exam revision ongoing in Library!"
 			if lec_idx != -1:
 				var lec = Schedule.get_lecture(lec_idx)
-				tip = "ACTIVE LECTURE: %s at Faculty Hall LT1!" % String(lec.get("name", "Lecture"))
-			_show_feedback(player, "📋 NOTICEBOARD: %s | Dean's Honour Roll posted. Faith +15!" % tip)
+				tip = "ACTIVE LECTURE: %s at LT1!" % String(lec.get("name", "Lecture"))
+			var honors_tag: String = "First Class" if needs.cgpa >= 4.50 else ("2:1 Upper" if needs.cgpa >= 3.50 else "Good Standing")
+			_show_feedback(player, "● NOTICEBOARD [%dL %s • %s (%.2f)]: %s (CGPA +0.03, Faith +15)" % [StudentProfile.current_level, StudentProfile.admitted_department, honors_tag, needs.cgpa, tip])
 
 		ObjectType.SPONSOR_STAND:
 			if AdManager:

@@ -134,7 +134,7 @@ unique_name_in_owner = true
 own_world_3d = true
 handle_input_locally = false
 size = Vector2i(540, 205)
-render_target_update_mode = 4
+render_target_update_mode = 1
 
 [node name="PreviewCamera" type="Camera3D" parent="SafeArea/CardCenter/CardPanel/CardVBox/PreviewCard/PreviewVBox/PreviewViewportContainer/PreviewViewport"]
 transform = Transform3D(1, 0, 0, 0, 0.996195, 0.087156, 0, -0.087156, 0.996195, 0, 1.02, 2.30)

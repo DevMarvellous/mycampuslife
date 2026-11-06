@@ -47,6 +47,23 @@ func _on_clearance_desk_interacted() -> void:
 			player.display_notification("🎓 DEPARTMENTAL SCREENING PASSED! Confirmed in %s (%s) + ₦5,000 Merit Grant!" % [ProfileStore.admitted_course_title, ProfileStore.admitted_department])
 		return
 
+	if cgpa >= 3.50 and ProfileStore.current_level < 400:
+		var old_level: int = ProfileStore.current_level
+		ProfileStore.current_level = mini(400, ProfileStore.current_level + 100)
+		ProfileStore.save_to_disk()
+		var grant: int = 10000 if cgpa >= 4.50 else 5000
+		if needs:
+			needs.modify_money(grant)
+			needs.modify_faith(35.0)
+			needs.modify_academic(15.0)
+		if SoundManager:
+			SoundManager.play_cheer()
+		if player.has_method("play_celebrate_animation"):
+			player.play_celebrate_animation("▲ PROMOTED TO %dL!" % ProfileStore.current_level)
+		if player.has_method("display_notification"):
+			player.display_notification("★ SENATE PROMOTION: Promoted from %dL to %dL in %s! (+₦%d Merit Bursary, +35 Faith)" % [old_level, ProfileStore.current_level, ProfileStore.admitted_department, grant])
+		return
+
 	if cgpa >= 4.50:
 		if needs:
 			needs.modify_money(10000)
@@ -54,7 +71,7 @@ func _on_clearance_desk_interacted() -> void:
 		if SoundManager:
 			SoundManager.play_cheer()
 		if player.has_method("display_notification"):
-			player.display_notification("🏆 VC DISTINCTION ROLL: Dr. Mrs. Adeyemi awarded %s the Senate First-Class Bursary (+₦10,000, +40 Faith)!" % student_name)
+			player.display_notification("★ VC DISTINCTION ROLL (%dL): Dr. Mrs. Adeyemi awarded %s the Senate First-Class Bursary (+₦10,000, +40 Faith)! Ready for Convocation Hall!" % [ProfileStore.current_level, student_name])
 	elif cgpa >= 3.50:
 		if needs:
 			needs.modify_money(2500)
@@ -62,14 +79,14 @@ func _on_clearance_desk_interacted() -> void:
 		if SoundManager:
 			SoundManager.play_click()
 		if player.has_method("display_notification"):
-			player.display_notification("📜 SENATE CLEARANCE PASSED: Academic audit complete with Second Class Upper honors! (+₦2,500, +20 Faith)")
+			player.display_notification("● SENATE CLEARANCE PASSED (%dL): Second Class Upper honors verified! (+₦2,500, +20 Faith) Visit Convocation Hall to graduate!" % ProfileStore.current_level)
 	else:
 		if needs:
 			needs.modify_faith(10.0)
 		if SoundManager:
 			SoundManager.play_click()
 		if player.has_method("display_notification"):
-			player.display_notification("📋 CLEARANCE VERIFIED: Matric dossiers authenticated by Deputy Registrar. Keep your CGPA rising above 3.50!")
+			player.display_notification("● CLEARANCE VERIFIED (%dL): Matric dossiers authenticated. Raise CGPA above 3.50 for next Level Promotion!" % ProfileStore.current_level)
 
 
 func _on_player_passed_out(_reason: String) -> void:

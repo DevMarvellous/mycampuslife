@@ -3,7 +3,7 @@ extends Control
 
 ## Interactive Top-Down 2D Snooker & Pool Mini-Game for the Student Union Building.
 ## Features realistic 2D ball physics, cue aiming line, charge power meter,
-## pocket potting, scratch penalties, and Nigerian campus arcade betting.
+## pocket potting, scratch foul rules, and 3 free-entry SUB Championship skill tiers.
 
 signal game_closed(total_winnings: int)
 
@@ -59,6 +59,7 @@ var stake_paid: bool = false
 
 func _ready() -> void:
 	visible = false
+	set_physics_process(false)
 	set_process_input(true)
 	if btn_stake_free: btn_stake_free.pressed.connect(func(): _set_stake(0))
 	if btn_stake_hustle: btn_stake_hustle.pressed.connect(func(): _set_stake(500))
@@ -67,23 +68,31 @@ func _ready() -> void:
 	reset_table()
 
 
+func get_active_pocket_radius() -> float:
+	if active_stake == 1500:
+		return 20.5 # Pro championship tight pockets
+	elif active_stake == 500:
+		return 23.0 # Inter-Hall league medium pockets
+	return POCKET_RADIUS
+
+
 func _set_stake(s: int) -> void:
 	active_stake = s
-	stake_paid = false
+	stake_paid = true
 	_update_stake_buttons()
 	reset_table()
 	if SoundManager:
 		SoundManager.play_click()
 	if status_label:
 		if active_stake == 0:
-			status_label.text = "🟢 Practice Mode: Free table • Win ₦250/ball (₦1,000 for 8-ball)"
+			status_label.text = "● Practice Table: Standard pockets • +₦250/ball (₦1,000 for 8-ball)"
 			status_label.add_theme_color_override(&"font_color", Color(0.4, 0.95, 0.5))
 		elif active_stake == 500:
-			status_label.text = "🟡 Campus Hustle: ₦500 Stake • Win ₦600/ball (₦3,000 for 8-ball)"
+			status_label.text = "★ Inter-Hall League: Tighter pockets (Free Entry) • +₦600/ball (₦3,000 for 8-ball)"
 			status_label.add_theme_color_override(&"font_color", Color(1.0, 0.85, 0.2))
 		else:
-			status_label.text = "🔴 High-Roller Table: ₦1,500 Stake • Win ₦1,500/ball (₦6,000 for 8-ball)"
-			status_label.add_theme_color_override(&"font_color", Color(1.0, 0.45, 0.45))
+			status_label.text = "▲ SUG Championship: Pro pockets & fast cloth (Free Entry) • +₦1,500/ball (₦6,000 for 8-ball)"
+			status_label.add_theme_color_override(&"font_color", Color(0.45, 0.85, 1.0))
 	_update_ui()
 
 
@@ -93,32 +102,35 @@ func _update_stake_buttons() -> void:
 	if btn_stake_hustle:
 		btn_stake_hustle.add_theme_color_override(&"font_color", Color(1.0, 0.85, 0.2) if active_stake == 500 else Color(0.7, 0.7, 0.7))
 	if btn_stake_pro:
-		btn_stake_pro.add_theme_color_override(&"font_color", Color(1.0, 0.45, 0.45) if active_stake == 1500 else Color(0.7, 0.7, 0.7))
+		btn_stake_pro.add_theme_color_override(&"font_color", Color(0.45, 0.85, 1.0) if active_stake == 1500 else Color(0.7, 0.7, 0.7))
 
 
 func open_game(player: CharacterBody3D = null) -> void:
 	current_player = player
 	session_winnings = 0
 	score_balls_potted = 0
-	stake_paid = false
+	stake_paid = true
 	reset_table()
 	_update_stake_buttons()
 	visible = true
+	set_physics_process(true)
 	_update_ui()
 
 
 func close_game() -> void:
 	visible = false
+	set_physics_process(false)
 	if current_player:
 		var needs: NeedsManager = current_player.get_node_or_null("NeedsManager") as NeedsManager
 		if needs and session_winnings > 0:
 			needs.modify_money(session_winnings)
 			needs.modify_energy(10.0)
+			needs.modify_faith(12.0)
 		if current_player.has_method("display_notification"):
 			if session_winnings > 0:
-				current_player.display_notification("Snooker session ended! Won +₦%d and campus arcade respect!" % session_winnings)
+				current_player.display_notification("SUB Snooker Championship ended! Earned +₦%d merit prize & +12 Faith!" % session_winnings)
 			else:
-				current_player.display_notification("Snooker session ended! Good practice.")
+				current_player.display_notification("Snooker session ended! Good table practice.")
 	game_closed.emit(session_winnings)
 
 
@@ -236,9 +248,10 @@ func _physics_process(delta: float) -> void:
 				b.pos.y = max_y
 				b.vel.y = -b.vel.y * 0.85
 
-			# Check pocket sink
+			# Check pocket sink using tier pocket radius
+			var p_rad: float = get_active_pocket_radius()
 			for p in pockets:
-				if b.pos.distance_to(p) <= POCKET_RADIUS:
+				if b.pos.distance_to(p) <= p_rad:
 					_pocket_ball(b)
 					break
 		else:
@@ -284,13 +297,13 @@ func _pocket_ball(b: Ball) -> void:
 	b.vel = Vector2.ZERO
 
 	if b.is_cue:
-		# Scratch penalty scaled to active stake
+		# Scratch foul reduces accumulated tournament prize points (never touches student wallet)
 		var pen: int = 100
 		if active_stake == 500: pen = 300
 		elif active_stake == 1500: pen = 600
 		session_winnings = maxi(0, session_winnings - pen)
 		if status_label:
-			status_label.text = "⚠️ FOUL! Cue Ball Pocketed! -₦%d Penalty" % pen
+			status_label.text = "! SCRATCH FOUL! Cue Ball Pocketed! -₦%d Prize Deduction" % pen
 			status_label.add_theme_color_override(&"font_color", Color(1.0, 0.3, 0.3))
 		if SoundManager:
 			SoundManager.play_alert()
@@ -314,11 +327,11 @@ func _pocket_ball(b: Ball) -> void:
 		if b.number == 8:
 			reward = eight_reward
 			if status_label:
-				status_label.text = "🏆 8-BALL POTTED! BIG ARCADE JACKPOT! +₦%d!" % reward
+				status_label.text = "★ 8-BALL POTTED! SUB CHAMPIONSHIP TROPHY BONUS! +₦%d!" % reward
 				status_label.add_theme_color_override(&"font_color", Color(1.0, 0.85, 0.2))
 		else:
 			if status_label:
-				status_label.text = "🎯 NICE SHOT! Ball #%d Potted! +₦%d" % [b.number, reward]
+				status_label.text = "● NICE SHOT! Ball #%d Potted! +₦%d Merit Prize" % [b.number, reward]
 				status_label.add_theme_color_override(&"font_color", Color(0.3, 0.95, 0.5))
 
 		session_winnings += reward
@@ -334,20 +347,8 @@ func strike() -> void:
 	if balls_moving or not cue_ball or cue_ball.potted:
 		return
 
-	# Handle stake payment on first strike of frame
-	if active_stake > 0 and not stake_paid:
-		if current_player:
-			var needs: NeedsManager = current_player.get_node_or_null("NeedsManager") as NeedsManager
-			if needs and needs.money < active_stake:
-				if status_label:
-					status_label.text = "⚠️ Sapa Alert! Insufficient wallet cash for ₦%d stake!" % active_stake
-					status_label.add_theme_color_override(&"font_color", Color(1.0, 0.35, 0.35))
-				if SoundManager:
-					SoundManager.play_alert()
-				return
-			if needs:
-				needs.modify_money(-active_stake)
-		stake_paid = true
+	# Pure skill tournament: zero cash stake deduction from student wallet
+	stake_paid = true
 
 	if current_player and current_player.has_method("play_snooker_shot_animation"):
 		current_player.play_snooker_shot_animation()
@@ -361,10 +362,10 @@ func strike() -> void:
 
 func _update_ui() -> void:
 	if score_label:
-		var mode_name = "Practice (₦0)"
-		if active_stake == 500: mode_name = "Hustle (₦500)"
-		elif active_stake == 1500: mode_name = "High-Roller (₦1,500)"
-		score_label.text = "Mode: %s | Potted: %d | Winnings: ₦%d" % [mode_name, score_balls_potted, session_winnings]
+		var mode_name = "Practice Table"
+		if active_stake == 500: mode_name = "Inter-Hall League"
+		elif active_stake == 1500: mode_name = "SUG Championship"
+		score_label.text = "Tier: %s | Potted: %d | Prize: ₦%d" % [mode_name, score_balls_potted, session_winnings]
 
 
 func _draw() -> void:
@@ -384,10 +385,11 @@ func _draw() -> void:
 	var d_line_y = TABLE_RECT.position.y + TABLE_RECT.size.y * 0.78
 	draw_line(Vector2(TABLE_RECT.position.x + 8, d_line_y), Vector2(TABLE_RECT.position.x + TABLE_RECT.size.x - 8, d_line_y), Color(0.2, 0.6, 0.3, 0.6), 2.0)
 
-	# Draw Pockets
+	# Draw Pockets (scaled to active tournament tier)
+	var p_rad: float = get_active_pocket_radius()
 	for p in pockets:
-		draw_circle(p, POCKET_RADIUS, Color(0.06, 0.06, 0.06)) # Deep black hole
-		draw_arc(p, POCKET_RADIUS, 0, TAU, 32, Color(0.4, 0.35, 0.2), 3.0) # Brass pocket rim
+		draw_circle(p, p_rad, Color(0.06, 0.06, 0.06)) # Deep black hole
+		draw_arc(p, p_rad, 0, TAU, 32, Color(0.4, 0.35, 0.2), 3.0) # Brass pocket rim
 
 	# Draw Aiming Line from Cue Ball
 	if cue_ball and not cue_ball.potted and not balls_moving:

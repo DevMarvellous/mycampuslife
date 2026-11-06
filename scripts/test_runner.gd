@@ -603,6 +603,46 @@ func _ready() -> void:
 	hud_opp_inst.queue_free()
 	print("  -> Anti-Lag SubViewport Sleep, Crisp Text Sanitizer, 5 Camera Views & Live Opportunities OK")
 
+	# Test Wagering-Free Snooker Championship Tiers, Idle Physics Sleep & Senate Level Progression
+	print("[6n/6] Verifying SUB Snooker Championship Skill Tiers, Idle Physics Sleep & Senate 100L-400L Progression...")
+	var snk_scene = load("res://scenes/snooker_mini_game.tscn")
+	var snk_inst = snk_scene.instantiate()
+	add_child(snk_inst)
+	assert(snk_inst.is_physics_processing() == false, "Snooker physics must sleep when closed")
+	snk_inst.open_game(player)
+	assert(snk_inst.is_physics_processing() == true, "Snooker physics must wake when open")
+	snk_inst._set_stake(0)
+	assert(is_equal_approx(snk_inst.get_active_pocket_radius(), 26.0), "Practice tier pocket radius must be 26.0")
+	snk_inst._set_stake(500)
+	assert(is_equal_approx(snk_inst.get_active_pocket_radius(), 23.0), "Inter-Hall League pocket radius must be 23.0")
+	snk_inst._set_stake(1500)
+	assert(is_equal_approx(snk_inst.get_active_pocket_radius(), 20.5), "SUG Championship pocket radius must be 20.5")
+	var p_needs: NeedsManager = player.get_node_or_null("NeedsManager") as NeedsManager
+	var money_before_strike: int = p_needs.money if p_needs else 0
+	snk_inst.strike()
+	var money_after_strike: int = p_needs.money if p_needs else 0
+	assert(money_after_strike == money_before_strike, "Snooker tournament strike must NEVER deduct cash stakes from student wallet")
+	snk_inst.close_game()
+	assert(snk_inst.is_physics_processing() == false, "Snooker physics must sleep again after closing")
+	snk_inst.queue_free()
+
+	var senate_scene = load("res://scenes/rooms/senate_building.tscn")
+	var senate_inst = senate_scene.instantiate()
+	add_child(senate_inst)
+	senate_inst.player = player
+	StudentProfile.is_department_confirmed = true
+	StudentProfile.current_level = 100
+	if p_needs:
+		p_needs.cgpa = 4.60
+	senate_inst._on_clearance_desk_interacted()
+	assert(StudentProfile.current_level == 200, "Senate clearance with CGPA >= 3.50 must promote 100L student to 200L")
+	senate_inst._on_clearance_desk_interacted()
+	assert(StudentProfile.current_level == 300, "Senate clearance must promote 200L student to 300L")
+	senate_inst._on_clearance_desk_interacted()
+	assert(StudentProfile.current_level == 400, "Senate clearance must promote 300L student to 400L Final Year")
+	senate_inst.queue_free()
+	print("  -> SUB Snooker Championship Skill Tiers (Zero Wagering), Physics Sleep & Senate 100L-400L Promotion OK")
+
 	print("========================================================")
 	print("   ALL 6 TEST PHASES PASSED WITH ZERO CRASHES OR ERRORS!")
 	print("========================================================\n")
