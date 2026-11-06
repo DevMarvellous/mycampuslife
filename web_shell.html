@@ -89,9 +89,14 @@
 :root {
 	--campus-green: #0b5334;
 	--campus-gold: #f5c518;
-	--campus-dark: #080c10;
-	--card-bg: rgba(12, 22, 17, 0.95);
-	--border-col: rgba(245, 197, 24, 0.75);
+	--campus-dark: #070b0e;
+	--card-bg: rgba(11, 20, 16, 0.88);
+	--border-col: rgba(245, 197, 24, 0.65);
+	--glass-surface: rgba(15, 26, 21, 0.82);
+	--glass-border: rgba(255, 255, 255, 0.12);
+	--text-primary: #f8fafc;
+	--text-secondary: #94a3b8;
+	--accent-emerald: #10b981;
 }
 
 * {
@@ -110,6 +115,7 @@ html, body, #canvas {
 	overflow: hidden;
 	touch-action: manipulation;
 	font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+	-webkit-font-smoothing: antialiased;
 }
 
 /* 1. Loading Splash Screen */
@@ -261,78 +267,94 @@ html, body, #canvas {
 
 .portal-sheet {
 	width: 100%;
-	max-width: 520px;
-	max-height: min(740px, calc(100dvh - 20px));
-	background: rgba(11, 22, 16, 0.98);
-	border: 2px solid var(--border-col);
-	border-radius: 22px;
-	box-shadow: 0 16px 48px rgba(0,0,0,0.88), 0 0 28px rgba(245, 197, 24, 0.16);
+	max-width: 530px;
+	max-height: min(760px, calc(100dvh - 24px));
+	background: var(--card-bg);
+	backdrop-filter: blur(20px);
+	-webkit-backdrop-filter: blur(20px);
+	border: 1.5px solid var(--border-col);
+	border-radius: 24px;
+	box-shadow: 0 24px 64px rgba(0, 0, 0, 0.85), 0 0 32px rgba(245, 197, 24, 0.18);
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
+	transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .portal-header {
-	background: linear-gradient(180deg, rgba(16, 68, 42, 0.95) 0%, rgba(10, 36, 24, 0.95) 100%);
+	background: linear-gradient(180deg, rgba(16, 68, 42, 0.92) 0%, rgba(10, 36, 24, 0.92) 100%);
 	border-bottom: 2px solid var(--campus-gold);
-	padding: 14px 18px 10px 18px;
+	padding: 16px 20px 12px 20px;
 	text-align: center;
 	flex-shrink: 0;
+	backdrop-filter: blur(12px);
 }
 
 .portal-crest {
-	font-size: 20px;
-	margin-bottom: 2px;
+	font-size: 15px;
+	font-weight: 900;
+	letter-spacing: 0.8px;
+	color: #fff;
 }
 
 .portal-h1 {
-	font-size: 17px;
+	font-size: 18px;
 	font-weight: 800;
 	color: var(--campus-gold);
 	margin: 0;
-	letter-spacing: 0.5px;
+	letter-spacing: 0.4px;
 }
 
 .portal-h2 {
-	font-size: 11px;
-	color: #a3e6be;
+	font-size: 12px;
+	color: #a7f3d0;
 	text-transform: uppercase;
-	margin: 2px 0 8px 0;
-	font-weight: 600;
+	margin: 4px 0 10px 0;
+	font-weight: 700;
+	letter-spacing: 0.5px;
 }
 
 /* Step Bar Navigation */
 .step-bar {
 	display: flex;
-	gap: 4px;
+	gap: 8px;
 	justify-content: center;
 	padding: 0 4px;
 }
 
 .step-chip {
 	flex: 1;
-	font-size: 10px;
+	font-size: 12px;
 	font-weight: 700;
-	padding: 5px 2px;
+	padding: 8px 10px;
 	text-align: center;
-	border-radius: 6px;
-	background: rgba(255,255,255,0.08);
-	color: #8da498;
+	border-radius: 10px;
+	background: rgba(255, 255, 255, 0.06);
+	color: #94a3b8;
 	cursor: pointer;
-	border: 1px solid transparent;
-	transition: all 0.2s;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	transition: all 0.2s ease-out;
+	user-select: none;
+}
+
+.step-chip:hover {
+	background: rgba(255, 255, 255, 0.12);
+	color: #f8fafc;
+	transform: translateY(-1px);
 }
 
 .step-chip.active {
-	background: var(--campus-gold);
+	background: linear-gradient(180deg, #fef08a 0%, var(--campus-gold) 100%);
 	color: #06180f;
 	border-color: #fff;
-	box-shadow: 0 2px 8px rgba(245, 197, 24, 0.35);
+	font-weight: 800;
+	box-shadow: 0 4px 14px rgba(245, 197, 24, 0.38);
 }
 
 .step-chip.done {
-	background: #0f5c35;
-	color: #c4f1d7;
+	background: #064e3b;
+	color: #6ee7b7;
+	border-color: rgba(110, 231, 183, 0.4);
 }
 
 /* Scrollable Form Body */
@@ -340,7 +362,7 @@ html, body, #canvas {
 	flex: 1;
 	overflow-y: auto;
 	-webkit-overflow-scrolling: touch;
-	padding: 16px 18px 24px 18px;
+	padding: 16px 20px 24px 20px;
 	display: flex;
 	flex-direction: column;
 	gap: 14px;
@@ -349,7 +371,7 @@ html, body, #canvas {
 .form-label {
 	font-size: 13px;
 	font-weight: 700;
-	color: #f1f5f9;
+	color: #e2e8f0;
 	margin-bottom: 6px;
 	display: block;
 }
@@ -357,38 +379,46 @@ html, body, #canvas {
 .portal-input {
 	width: 100%;
 	height: 48px;
-	background: rgba(255, 255, 255, 0.08);
-	border: 1.5px solid rgba(74, 222, 128, 0.4);
-	border-radius: 10px;
-	padding: 0 14px;
+	background: rgba(255, 255, 255, 0.06);
+	border: 1.5px solid rgba(74, 222, 128, 0.35);
+	border-radius: 12px;
+	padding: 0 16px;
 	font-size: 15px;
 	color: #fff;
 	outline: none;
-	transition: border-color 0.2s;
+	transition: all 0.2s ease-out;
 }
 
 .portal-input:focus {
 	border-color: var(--campus-gold);
-	background: rgba(255, 255, 255, 0.12);
+	background: rgba(255, 255, 255, 0.10);
+	box-shadow: 0 0 0 3px rgba(245, 197, 24, 0.2);
 }
 
 /* Quick Name Chips */
 .chips-wrap {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 6px;
-	margin-top: 6px;
+	gap: 8px;
+	margin-top: 8px;
 }
 
 .chip-btn {
-	background: rgba(20, 44, 32, 0.85);
-	border: 1px solid rgba(74, 222, 128, 0.35);
+	background: rgba(20, 44, 32, 0.75);
+	border: 1px solid rgba(74, 222, 128, 0.3);
 	color: #e2e8f0;
-	border-radius: 16px;
-	padding: 6px 12px;
+	border-radius: 20px;
+	padding: 6px 14px;
 	font-size: 12px;
+	font-weight: 600;
 	cursor: pointer;
-	transition: all 0.15s;
+	transition: all 0.15s ease-out;
+}
+
+.chip-btn:hover {
+	background: rgba(74, 222, 128, 0.2);
+	border-color: rgba(74, 222, 128, 0.6);
+	transform: translateY(-1px);
 }
 
 .chip-btn:active, .chip-btn.selected {
@@ -408,7 +438,7 @@ html, body, #canvas {
 .gender-btn {
 	height: 48px;
 	border-radius: 12px;
-	background: rgba(18, 36, 26, 0.8);
+	background: rgba(18, 36, 26, 0.75);
 	border: 1.5px solid rgba(74, 222, 128, 0.3);
 	color: #fff;
 	font-size: 14px;
@@ -417,21 +447,27 @@ html, body, #canvas {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	gap: 6px;
-	transition: all 0.2s;
+	gap: 8px;
+	transition: all 0.2s ease-out;
+}
+
+.gender-btn:hover {
+	border-color: rgba(74, 222, 128, 0.6);
+	transform: translateY(-1px);
 }
 
 .gender-btn.selected {
-	background: #0f5c35;
+	background: linear-gradient(180deg, #10b981 0%, #059669 100%);
 	border-color: var(--campus-gold);
-	box-shadow: 0 0 12px rgba(245, 197, 24, 0.25);
+	box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+	color: #fff;
 }
 
 /* Styling Tabs & Grid */
 .drip-tabs {
 	display: flex;
-	gap: 6px;
-	border-bottom: 1px solid rgba(255,255,255,0.1);
+	gap: 8px;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 	padding-bottom: 8px;
 }
 
@@ -440,11 +476,16 @@ html, body, #canvas {
 	background: transparent;
 	border: none;
 	color: #94a3b8;
-	font-size: 12px;
+	font-size: 13px;
 	font-weight: 700;
-	padding: 6px 0;
+	padding: 8px 0;
 	cursor: pointer;
 	border-bottom: 2px solid transparent;
+	transition: all 0.2s ease-out;
+}
+
+.drip-tab-btn:hover {
+	color: #f8fafc;
 }
 
 .drip-tab-btn.active {
@@ -455,49 +496,57 @@ html, body, #canvas {
 .drip-grid {
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
+	gap: 10px;
 }
 
 .drip-card {
-	background: rgba(18, 32, 24, 0.8);
+	background: rgba(18, 32, 24, 0.75);
 	border: 1.5px solid rgba(74, 222, 128, 0.25);
-	border-radius: 10px;
-	padding: 10px 14px;
+	border-radius: 14px;
+	padding: 12px 16px;
 	cursor: pointer;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	transition: all 0.2s;
+	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.drip-card:hover {
+	border-color: rgba(74, 222, 128, 0.6);
+	background: rgba(24, 48, 36, 0.85);
+	transform: translateY(-2px);
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
 .drip-card.selected {
 	border-color: var(--campus-gold);
-	background: rgba(24, 52, 38, 0.95);
-	box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+	background: linear-gradient(135deg, rgba(24, 52, 38, 0.95), rgba(15, 36, 26, 0.98));
+	box-shadow: 0 4px 18px rgba(245, 197, 24, 0.25);
 }
 
 .drip-info {
 	display: flex;
 	flex-direction: column;
-	gap: 2px;
+	gap: 3px;
 }
 
 .drip-name {
 	font-size: 14px;
-	font-weight: 700;
+	font-weight: 800;
 	color: #fff;
 }
 
 .drip-desc {
-	font-size: 11px;
+	font-size: 12px;
 	color: #94a3b8;
 }
 
 .drip-swatch {
-	width: 26px;
-	height: 26px;
-	border-radius: 13px;
-	border: 2px solid rgba(255,255,255,0.8);
+	width: 28px;
+	height: 28px;
+	border-radius: 14px;
+	border: 2px solid rgba(255, 255, 255, 0.85);
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 	flex-shrink: 0;
 }
 
@@ -505,147 +554,85 @@ html, body, #canvas {
 .faculty-select {
 	width: 100%;
 	height: 48px;
-	background: rgba(18, 36, 26, 0.95);
-	border: 1.5px solid rgba(74, 222, 128, 0.4);
-	border-radius: 10px;
+	background: rgba(18, 36, 26, 0.85);
+	border: 1.5px solid rgba(74, 222, 128, 0.35);
+	border-radius: 12px;
 	color: #fff;
 	font-size: 14px;
-	padding: 0 12px;
+	padding: 0 14px;
 	outline: none;
+	transition: all 0.2s ease-out;
+}
+
+.faculty-select:focus {
+	border-color: var(--campus-gold);
+	box-shadow: 0 0 0 3px rgba(245, 197, 24, 0.2);
 }
 
 .course-card {
 	background: rgba(14, 26, 20, 0.85);
-	border: 1px solid #1e4d37;
-	border-radius: 10px;
+	border: 1px solid rgba(74, 222, 128, 0.3);
+	border-radius: 12px;
 	padding: 12px 14px;
 	font-size: 12px;
 	color: #cbd5e1;
 	line-height: 1.5;
 }
 
-/* Quiz UI */
-.quiz-box {
-	background: rgba(14, 28, 20, 0.9);
-	border: 1px solid var(--campus-gold);
-	border-radius: 12px;
-	padding: 14px;
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-}
-
-.quiz-q {
-	font-size: 14px;
-	font-weight: 700;
-	color: var(--campus-gold);
-}
-
-.quiz-opt {
-	background: rgba(255,255,255,0.06);
-	border: 1px solid rgba(255,255,255,0.15);
-	border-radius: 8px;
-	padding: 10px 12px;
-	font-size: 13px;
-	color: #fff;
-	cursor: pointer;
-	text-align: left;
-	transition: all 0.2s;
-}
-
-.quiz-opt:active, .quiz-opt.selected {
-	background: #0f5c35;
-	border-color: var(--campus-gold);
-	font-weight: 700;
-}
-
-/* Letter Presentation */
-.cert-box {
-	background: #fbfbf8;
-	color: #0f172a;
-	border: 3px double #0b5334;
-	border-radius: 12px;
-	padding: 18px 16px;
-	text-align: center;
-	box-shadow: inset 0 0 20px rgba(11, 83, 52, 0.1);
-}
-
-.cert-header {
-	font-size: 14px;
-	font-weight: 800;
-	color: #0b5334;
-	text-transform: uppercase;
-	margin-bottom: 2px;
-}
-
-.cert-sub {
-	font-size: 10px;
-	color: #64748b;
-	margin-bottom: 12px;
-	letter-spacing: 1px;
-}
-
-.cert-title {
-	font-size: 16px;
-	font-weight: 900;
-	color: #b45309;
-	margin-bottom: 8px;
-}
-
-.cert-matric {
-	display: inline-block;
-	background: #0b5334;
-	color: var(--campus-gold);
-	padding: 4px 12px;
-	border-radius: 6px;
-	font-weight: 800;
-	font-size: 13px;
-	letter-spacing: 1px;
-	margin: 8px 0;
-}
-
 /* Bottom Actions */
 .portal-footer {
-	padding: 10px 18px 14px 18px;
+	padding: 12px 20px 16px 20px;
 	background: rgba(10, 20, 15, 0.95);
-	border-top: 1px solid rgba(255,255,255,0.1);
+	border-top: 1px solid rgba(255, 255, 255, 0.1);
 	display: flex;
-	gap: 10px;
+	gap: 12px;
 	flex-shrink: 0;
 }
 
 .btn-primary {
 	flex: 2;
 	height: 52px;
-	background: linear-gradient(180deg, #fcd34d 0%, var(--campus-gold) 100%);
+	background: linear-gradient(180deg, #fef08a 0%, var(--campus-gold) 100%);
 	border: none;
-	border-radius: 12px;
+	border-radius: 14px;
 	font-size: 15px;
 	font-weight: 800;
 	color: #0b2217;
 	cursor: pointer;
-	box-shadow: 0 4px 14px rgba(245, 197, 24, 0.35);
+	box-shadow: 0 4px 16px rgba(245, 197, 24, 0.35);
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	gap: 8px;
-	transition: transform 0.15s;
+	transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-primary:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 6px 20px rgba(245, 197, 24, 0.5);
 }
 
 .btn-primary:active {
-	transform: scale(0.98);
+	transform: translateY(0);
 }
 
 .btn-secondary {
 	flex: 1;
 	height: 52px;
-	background: rgba(255,255,255,0.08);
-	border: 1px solid rgba(255,255,255,0.2);
-	border-radius: 12px;
-	font-size: 13px;
+	background: rgba(255, 255, 255, 0.06);
+	border: 1px solid rgba(255, 255, 255, 0.18);
+	border-radius: 14px;
+	font-size: 14px;
 	font-weight: 700;
 	color: #cbd5e1;
 	cursor: pointer;
+	transition: all 0.2s ease-out;
+}
+
+.btn-secondary:hover {
+	background: rgba(255, 255, 255, 0.12);
+	color: #fff;
+	transform: translateY(-1px);
 }
 	</style>
 	<script src="./cloud_config.js"></script>
@@ -719,14 +706,14 @@ html, body, #canvas {
 					</div>
 
 					<!-- Google OAuth Button (Primary Login / Signup) -->
-					<button type="button" onclick="signInWithGoogle()" style="width: 100%; height: 48px; background: #ffffff; color: #0f172a; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 14px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 14px rgba(0,0,0,0.35); margin-bottom: 10px;">
-						<svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-						<span id="google-btn-text">Continue with Google (Login / Sign Up)</span>
+					<button type="button" onclick="signInWithGoogle()" style="width: 100%; height: 50px; background: #ffffff; color: #0f172a; border: 1.5px solid #e2e8f0; border-radius: 14px; font-size: 14px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.35); margin-bottom: 12px; transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);">
+						<svg width="20" height="20" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+						<span id="google-btn-text">Continue with Google (Instant Login)</span>
 					</button>
 
-					<div style="display: flex; gap: 6px; margin-bottom: 10px;">
-						<button type="button" class="drip-tab-btn active" id="auth-mode-register" onclick="setAuthMode('register')">🎓 New Student</button>
-						<button type="button" class="drip-tab-btn" id="auth-mode-login" onclick="setAuthMode('login')">🔐 Returning @Username</button>
+					<div style="display: flex; gap: 8px; margin-bottom: 12px; background: rgba(0,0,0,0.3); padding: 4px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);">
+						<button type="button" class="drip-tab-btn active" id="auth-mode-register" onclick="setAuthMode('register')" style="border-radius: 8px;">🎓 New Student</button>
+						<button type="button" class="drip-tab-btn" id="auth-mode-login" onclick="setAuthMode('login')" style="border-radius: 8px;">🔐 Returning @Username</button>
 					</div>
 
 					<div id="register-fields-wrap">
