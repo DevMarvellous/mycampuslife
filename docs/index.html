@@ -1171,6 +1171,14 @@ input[type="range"]::-moz-range-thumb {
 							</div>
 							<input id="vol-sfx-slider" type="range" min="0" max="100" value="90" oninput="setAudioBusVolume('sfx', this.value)" />
 						</div>
+
+						<div style="display:flex; align-items:center; justify-content:space-between; padding-top:8px; border-top:1px solid rgba(255,255,255,0.06);">
+							<div>
+								<div style="font-size:12px; font-weight:700; color:#e2e8f0;">🔇 Auto-Mute Inactive Tab</div>
+								<div style="font-size:10px; color:#94a3b8;">Mutes sound when switching browser tabs</div>
+							</div>
+							<input type="checkbox" id="tab-automute-toggle" checked style="width:18px; height:18px; accent-color:var(--campus-gold); cursor:pointer;" onchange="toggleTabAutoMute(this.checked)" />
+						</div>
 					</div>
 
 					<div style="font-size:11px; color:#64748b; line-height:1.4;">
@@ -1254,6 +1262,10 @@ input[type="range"]::-moz-range-thumb {
 							📂 Restore Record from .json
 							<input type="file" accept=".json,application/json" style="display:none;" onchange="if(this.files &amp;&amp; this.files[0]) importStudentRecordJSON(this.files[0])" />
 						</label>
+
+						<button type="button" id="pwa-settings-install-btn" class="btn-primary" style="height:40px; font-size:12px; background:linear-gradient(135deg, #10b981, #059669); border:none; display:none; align-items:center; justify-content:center; gap:6px;" onclick="triggerPWAInstall()">
+							📲 Install Campus Life App on Home Screen
+						</button>
 					</div>
 
 					<div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:10px; display:flex; flex-direction:column; gap:8px;">
@@ -1425,6 +1437,7 @@ input[type="range"]::-moz-range-thumb {
 	</div>
 
 	<button id="web-cloud-db-btn" onclick="openCloudDbModal()" style="display:none; position:fixed; top:10px; right:118px; z-index:45; background:rgba(12, 24, 18, 0.85); color:#34d399; border:1px solid rgba(52, 211, 153, 0.55); border-radius:8px; padding:6px 10px; font-size:11px; font-weight:700; cursor:pointer; backdrop-filter:blur(4px);">☁️ Cloud DB</button>
+	<button id="pwa-install-pill" type="button" onclick="triggerPWAInstall()" style="display:none; position:fixed; bottom:14px; left:14px; z-index:50; background:linear-gradient(135deg, #10b981 0%, #059669 100%); border:1px solid #f5c518; color:#ffffff; border-radius:20px; padding:7px 14px; font-size:12px; font-weight:800; cursor:pointer; backdrop-filter:blur(6px); align-items:center; gap:6px; box-shadow:0 4px 14px rgba(0,0,0,0.6); user-select:none;">📲 Install App</button>
 	<button id="web-fullscreen-btn" onclick="toggleFullScreen()">⛶ Fullscreen</button>
 
 	<script src="index.js"></script>
@@ -1463,13 +1476,19 @@ const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
 const TIPS = [
-	"💡 Tip: Tap on any object or student once to auto-walk and interact!",
-	"💡 Tip: Catch the yellow Danfo shuttle (₦100) to reach faculty halls instantly.",
+	"💡 Tip: Tap on any object, door or student once to auto-walk and interact!",
+	"💡 Tip: Catch the yellow Danfo shuttle (₦100) at the Park to reach faculty halls instantly.",
+	"💡 Tip: Visit Brother Emmanuel at Fellowship Chapel for Morning Devotions & +50 Faith boost!",
+	"💡 Tip: Pitch tech startups to Tech Bro Segun at Silicon Lagoon Hub for +₦4,500 innovation grants!",
 	"💡 Tip: Sleep in your hostel bed to wake up at 07:00 AM with 100% full Energy.",
 	"💡 Tip: Keep your CGPA above 4.50 to claim the ₦25,000 First Class Merit Scholarship at Senate!",
+	"💡 Tip: Meditate under the shady park trees at Botanical Gardens to instantly recharge +25 Energy.",
 	"💡 Tip: Grab Jollof + Zobo at Mama Put canteen to keep your hunger filled.",
-	"💡 Tip: Low on pocket money? Take freelance gigs at the SUB business center.",
-	"💡 Tip: Your hostel mini-fridge keeps chilled drinks to boost energy anywhere."
+	"💡 Tip: Low on pocket money? Take freelance graphic design & coding gigs at the SUB.",
+	"💡 Tip: Win the Dean's Cup penalty tournament or 9-Ball Snooker at the SUB for pure skill athletic clout!",
+	"💡 Tip: Back up your character save anytime in Settings -> Student Save (.json) to play across any phone or laptop!",
+	"💡 Tip: Maintain your daily attendance streak for the Vice-Chancellor's Academic Excellence Milestone Grant!",
+	"💡 Tip: Comrade Ojo is recruiting freshers for Student Union Leadership: run for Course Rep at Senate!"
 ];
 
 let tipIndex = 0;
@@ -1486,6 +1505,59 @@ function toggleFullScreen() {
 		if (document.exitFullscreen) document.exitFullscreen();
 	}
 }
+
+/* =======================================================
+   PROGRESSIVE WEB APP (PWA) HOME-SCREEN INSTALL ENGINE
+   ======================================================= */
+let _deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+	e.preventDefault();
+	_deferredInstallPrompt = e;
+	const pill = document.getElementById('pwa-install-pill');
+	if (pill) pill.style.display = 'inline-flex';
+	const sBtn = document.getElementById('pwa-settings-install-btn');
+	if (sBtn) sBtn.style.display = 'flex';
+});
+
+window.triggerPWAInstall = function() {
+	if (_deferredInstallPrompt) {
+		_deferredInstallPrompt.prompt();
+		_deferredInstallPrompt.userChoice.then((choice) => {
+			if (choice && choice.outcome === 'accepted') {
+				window.showCampusHtmlToast('📲 App Installed!', 'My Campus Life added to your home screen!');
+				const pill = document.getElementById('pwa-install-pill');
+				if (pill) pill.style.display = 'none';
+			}
+			_deferredInstallPrompt = null;
+		});
+	} else {
+		alert('📲 How to Install My Campus Life App:\n\n• Android Chrome: Tap browser menu ⋮ -> "Install app" (or "Add to Home Screen")\n• iPhone / iPad Safari: Tap Share ⎋ -> scroll down and tap "Add to Home Screen" ➕\n\nYou get full-screen play with zero browser bars and instant launching!');
+	}
+};
+
+/* =======================================================
+   TAB INACTIVITY AUTO-MUTE (BACKGROUND AUDIO SHIELD)
+   ======================================================= */
+let _tabAutoMuteEnabled = true;
+try {
+	const savedMute = localStorage.getItem('mcl_tab_automute');
+	if (savedMute !== null) _tabAutoMuteEnabled = (savedMute === '1');
+} catch (e) {}
+
+window.toggleTabAutoMute = function(enabled) {
+	_tabAutoMuteEnabled = !!enabled;
+	try { localStorage.setItem('mcl_tab_automute', _tabAutoMuteEnabled ? '1' : '0'); } catch (e) {}
+};
+
+document.addEventListener('visibilitychange', () => {
+	if (!_tabAutoMuteEnabled) return;
+	if (document.hidden) {
+		window.triggerGodotHudAction('vol_master:0.00');
+	} else {
+		const v = localStorage.getItem('mcl_vol_master') || '90';
+		window.triggerGodotHudAction('vol_master:' + (Number(v) / 100).toFixed(2));
+	}
+});
 
 /* =======================================================
    ADMISSIONS PORTAL STATE & DATA
@@ -3204,7 +3276,7 @@ function renderStudentCardCanvas(data) {
 
 	ctx.fillStyle = '#eab308';
 	ctx.font = 'bold 12px sans-serif';
-	ctx.fillText('PLAY FREE AT: MYCAMPUSLIFE.VERCEL.APP', W / 2, 850);
+	ctx.fillText('PLAY FREE AT: MYCAMPUSLIFE.VERCEL.APP • MARVEL DEVELOPS', W / 2, 850);
 }
 
 window.downloadStudentCardPNG = function() {
@@ -3218,13 +3290,17 @@ window.downloadStudentCardPNG = function() {
 
 window.copyStudentCardSummary = function() {
 	if (!_currentCardData) return;
-	const text = `🎓 MY CAMPUS LIFE - OFFICIAL STUDENT ID PASS\n` +
-		`Name: ${_currentCardData.name}\n` +
-		`Matric No: ${_currentCardData.matric_no}\n` +
-		`Dept: ${_currentCardData.department} (${_currentCardData.faculty})\n` +
-		`CGPA: ${_currentCardData.cgpa} / 5.00\n` +
-		`Title: ${_currentCardData.title}\n` +
-		`Play now at: https://mycampuslife.vercel.app`;
+	const text = `🎓 MY CAMPUS LIFE 3D - OFFICIAL STUDENT ID PASS\n` +
+		`━━━━━━━━━━━━━━━━━━━━━━━\n` +
+		`👤 Student: ${_currentCardData.name}\n` +
+		`🏷️ Matric No: ${_currentCardData.matric_no}\n` +
+		`📚 Department: ${_currentCardData.department} (${_currentCardData.faculty})\n` +
+		`📈 CGPA: ${_currentCardData.cgpa} / 5.00\n` +
+		`👑 Standing: ${_currentCardData.title}\n` +
+		`━━━━━━━━━━━━━━━━━━━━━━━\n` +
+		`Can you graduate with First Class Honours or will Indomie finish your pocket? 😂\n` +
+		`🎮 Play free in browser (Zero Download): https://mycampuslife.vercel.app\n` +
+		`Created by Marvellous Adepoju • Marvel Develops (marveldevelops.com)`;
 	if (navigator.clipboard) {
 		navigator.clipboard.writeText(text);
 	}
@@ -3235,11 +3311,13 @@ window.shareStudentCardToWhatsApp = async function() {
 	const canvas = document.getElementById('student-id-card-canvas');
 	if (!canvas) return;
 
-	const shareText = `🎓 Check out my official Student ID on My Campus Life!\n` +
-		`Name: ${(_currentCardData && _currentCardData.name) || 'Student'}\n` +
-		`Dept: ${(_currentCardData && _currentCardData.department) || 'Computer Science'}\n` +
-		`CGPA: ${(_currentCardData && _currentCardData.cgpa) || '4.50'}/5.00\n` +
-		`Play online: https://mycampuslife.vercel.app`;
+	const shareText = `🔥 Oya see my official Matric ID Pass on My Campus Life 3D! 🎓\n\n` +
+		`👤 Student: ${(_currentCardData && _currentCardData.name) || 'Student'}\n` +
+		`📚 Dept: ${(_currentCardData && _currentCardData.department) || 'Computer Science'}\n` +
+		`📈 CGPA: ${(_currentCardData && _currentCardData.cgpa) || '4.50'} / 5.00\n` +
+		`👑 Clout: ${(_currentCardData && _currentCardData.title) || 'Campus Scholar'}\n\n` +
+		`Can your CGPA beat mine? Oya enter campus (Free on phone/PC): https://mycampuslife.vercel.app\n` +
+		`Created by Marvellous Adepoju • Marvel Develops`;
 
 	if (navigator.canShare) {
 		try {
@@ -3493,13 +3571,16 @@ window.downloadDegreeCertificatePNG = function() {
 
 window.copyDegreeCertificateCitation = function() {
 	if (!_currentDegreeData) return;
-	const text = `🎓 FEDERAL UNIVERSITY OF MY CAMPUS LIFE - DEGREE CONFERMENT\n` +
-		`Graduate: ${_currentDegreeData.name}\n` +
-		`Degree: ${_currentDegreeData.honors}\n` +
-		`Department: ${_currentDegreeData.department}\n` +
-		`Matric No: ${_currentDegreeData.matric_no}\n` +
-		`Final CGPA: ${_currentDegreeData.cgpa} / 5.00\n` +
-		`Play & Graduate at: https://mycampuslife.vercel.app`;
+	const text = `🎓 MY CAMPUS LIFE 3D - OFFICIAL UNIVERSITY DEGREE CONFERMENT 📜\n` +
+		`━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+		`👤 Graduate: ${_currentDegreeData.name}\n` +
+		`🎖️ Honours: ${_currentDegreeData.honors}\n` +
+		`📚 Department: ${_currentDegreeData.department} (${_currentDegreeData.faculty})\n` +
+		`🏷️ Matric No: ${_currentDegreeData.matric_no}\n` +
+		`📈 Final CGPA: ${_currentDegreeData.cgpa} / 5.00\n` +
+		`━━━━━━━━━━━━━━━━━━━━━━━━━━\n` +
+		`Graduate with First Class Honours at: https://mycampuslife.vercel.app\n` +
+		`Created by Marvellous Adepoju • Marvel Develops (marveldevelops.com)`;
 	if (navigator.clipboard) {
 		navigator.clipboard.writeText(text);
 	}
@@ -3510,13 +3591,14 @@ window.shareDegreeCertificateToWhatsApp = async function() {
 	const canvas = document.getElementById('degree-certificate-canvas');
 	if (!canvas) return;
 
-	const shareText = `🎓 ALUTA CONTINUA! VICTORIA ACERTA!! 🎉\n` +
+	const shareText = `🎓 ALUTA CONTINUA! VICTORIA ACERTA!! 🎉📜\n\n` +
 		`I have officially graduated from My Campus Life University!\n` +
-		`Scholar: ${(_currentDegreeData && _currentDegreeData.name) || 'Graduate'}\n` +
-		`Degree: ${(_currentDegreeData && _currentDegreeData.honors) || 'B.Sc'}\n` +
-		`Department: ${(_currentDegreeData && _currentDegreeData.department) || 'University Studies'}\n` +
-		`Final CGPA: ${(_currentDegreeData && _currentDegreeData.cgpa) || '4.50'} / 5.00\n` +
-		`Join me on campus: https://mycampuslife.vercel.app`;
+		`🎖️ Honours: ${(_currentDegreeData && _currentDegreeData.honors) || 'FIRST CLASS HONOURS'}\n` +
+		`📚 Department: ${(_currentDegreeData && _currentDegreeData.department) || 'Computer Science'}\n` +
+		`📈 Final CGPA: ${(_currentDegreeData && _currentDegreeData.cgpa) || '4.85'} / 5.00\n\n` +
+		`Can you survive 100L-400L and graduate? Play free in browser:\n` +
+		`👉 https://mycampuslife.vercel.app\n` +
+		`By Marvellous Adepoju • Marvel Develops`;
 
 	if (navigator.canShare) {
 		try {
