@@ -1,12 +1,16 @@
 {
-  "name": "My Campus Life",
+  "name": "My Campus Life — Marvel Develops",
   "short_name": "CampusLife",
-  "description": "Authentic Nigerian University Life-Sim: Lectures, Danfo Shuttles, Mama Put, Hostel Living & Hustles!",
+  "description": "Authentic Nigerian University Life-Sim created by Marvellous Adepoju (Marvel Develops). Lectures, Danfo Shuttles, Mama Put, Hostel Living & Hustles!",
   "start_url": "./index.html",
   "display": "standalone",
   "orientation": "landscape",
   "background_color": "#064e3b",
   "theme_color": "#064e3b",
+  "developer": {
+    "name": "Marvellous Adepoju",
+    "url": "https://marveldevelops.com"
+  },
   "icons": [
     {
       "src": "./logo.svg",

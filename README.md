@@ -87,7 +87,11 @@
 
 ---
 
-## 🚀 Live Website
+## 🚀 Live Website & Developer Credits
 
-Play live: **[mycampuslife.vercel.app](https://mycampuslife.vercel.app)** *(or via custom domain)*
+- **Live Game**: **[mycampuslife.vercel.app](https://mycampuslife.vercel.app)**
+- **Developer**: **Marvellous Adepoju**
+- **Studio / Brand**: **[Marvel Develops](https://marveldevelops.com)**
+- **Official Website**: **[marveldevelops.com](https://marveldevelops.com)**
+
 
