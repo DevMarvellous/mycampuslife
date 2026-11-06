@@ -26,11 +26,11 @@ signal live_lecture_requested(player: CharacterBody3D)
 		"cash_reward": 0
 	},
 	{
-		"name": "🕶️ Backbench Cartel & Hustle",
-		"desc": "Stealth zone. Code freelance assignments under desk (+₦3,500 Cash, +0.05 CGPA)!",
+		"name": "★ Peer Tutorial & Study Group Leader",
+		"desc": "Organize a departmental tutorial session for coursemates (+₦3,500 Stipend, +0.12 CGPA)!",
 		"time_minutes": 60,
-		"energy_cost": 5.0,
-		"cgpa_gain": 0.05,
+		"energy_cost": 8.0,
+		"cgpa_gain": 0.12,
 		"cash_reward": 3500
 	},
 	{

@@ -643,6 +643,45 @@ func _ready() -> void:
 	senate_inst.queue_free()
 	print("  -> SUB Snooker Championship Skill Tiers (Zero Wagering), Physics Sleep & Senate 100L-400L Promotion OK")
 
+	# Test Leadership Rank, Daily Streak Rewards, Tech Hub Startup Mentorship & Botanical Garden Meditation
+	print("[6o/6] Verifying Leadership Promotion, Daily Streak Milestones, Tech Hub Pitches & Botanical Garden...")
+	StudentProfile.leadership_rank = 0
+	var promo_res: Dictionary = StudentProfile.promote_leadership(4.55)
+	assert(promo_res.get("promoted") == true, "CGPA 4.55 must promote Student Member to Course Rep")
+	assert(StudentProfile.leadership_rank == 1, "Leadership rank must now be 1")
+	assert(player.get_clout_title().contains("Course Rep"), "Player clout title must reflect Course Rep rank")
+
+	StudentProfile.last_streak_day = 0
+	StudentProfile.attendance_streak = 0
+	var strk1: Dictionary = StudentProfile.claim_daily_streak(1)
+	assert(strk1.get("claimed") == true and strk1.get("streak") == 1, "First day must start attendance streak at 1")
+	var strk_repeat: Dictionary = StudentProfile.claim_daily_streak(1)
+	assert(strk_repeat.get("claimed") == false, "Same day repeat claim must be rejected")
+	var strk7: Dictionary = StudentProfile.claim_daily_streak(7)
+	assert(strk7.get("claimed") == true, "Day 7 claim must succeed")
+
+	var th_scene = load("res://scenes/rooms/tech_hub.tscn")
+	var th_inst = th_scene.instantiate()
+	add_child(th_inst)
+	th_inst.player = player
+	var segun_npc = th_inst.get_node_or_null("NPCs/TechBroSegun")
+	assert(segun_npc != null, "TechBroSegun NPC must exist in TechHub")
+	th_inst._on_segun_dialogue_requested(segun_npc, player)
+	th_inst._on_ai_robotics_lab_interacted()
+	th_inst.queue_free()
+
+	var gd_scene = load("res://scenes/rooms/campus_garden.tscn")
+	var gd_inst = gd_scene.instantiate()
+	add_child(gd_inst)
+	gd_inst.player = player
+	th_inst = null
+	gd_inst._on_park_bench_interacted()
+	var tobi_npc = gd_inst.get_node_or_null("NPCs/StudentChilling")
+	assert(tobi_npc != null, "StudentChilling (Tobi) NPC must exist in Garden")
+	gd_inst._on_tobi_dialogue_requested(tobi_npc, player)
+	gd_inst.queue_free()
+	print("  -> Leadership Ladder, Daily Attendance Streak, Startup Pitch & Botanical Garden OK")
+
 	print("========================================================")
 	print("   ALL 6 TEST PHASES PASSED WITH ZERO CRASHES OR ERRORS!")
 	print("========================================================\n")

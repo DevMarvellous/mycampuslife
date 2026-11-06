@@ -55,6 +55,79 @@ static var current_level: int = 100 # 100, 200, 300, 400, 500 (Postgrad/Alumnus)
 static var current_semester: int = 1 # 1 or 2
 static var degree_awarded: String = "" # e.g. "B.Sc Computer Science (First Class Honours)"
 
+# Student Union Leadership Career & Daily Attendance Streak
+static var leadership_rank: int = 0 # 0: Member, 1: Course Rep, 2: Faculty Welfare Sec, 3: Fellowship Coord, 4: SUG President
+static var leadership_title: String = "Student Member"
+static var attendance_streak: int = 0
+static var last_streak_day: int = 0
+
+const LEADERSHIP_TIERS: Array[Dictionary] = [
+	{"rank": 0, "title": "Student Member", "min_cgpa": 0.0, "stipend": 0},
+	{"rank": 1, "title": "Course Representative", "min_cgpa": 3.00, "stipend": 2000},
+	{"rank": 2, "title": "Faculty Welfare Secretary", "min_cgpa": 3.50, "stipend": 3500},
+	{"rank": 3, "title": "Fellowship & Ethics Coordinator", "min_cgpa": 4.00, "stipend": 5500},
+	{"rank": 4, "title": "SUG Executive President", "min_cgpa": 4.40, "stipend": 8500}
+]
+
+static func promote_leadership(p_cgpa: float) -> Dictionary:
+	if leadership_rank < LEADERSHIP_TIERS.size() - 1:
+		var next_tier: Dictionary = LEADERSHIP_TIERS[leadership_rank + 1]
+		var req_cgpa: float = float(next_tier.get("min_cgpa", 3.0))
+		if p_cgpa >= req_cgpa:
+			leadership_rank += 1
+			leadership_title = String(next_tier.get("title", "Course Representative"))
+			var stipend: int = int(next_tier.get("stipend", 2000))
+			save_to_disk()
+			return {
+				"promoted": true,
+				"rank": leadership_rank,
+				"title": leadership_title,
+				"stipend": stipend,
+				"required_cgpa": req_cgpa
+			}
+		else:
+			return {
+				"promoted": false,
+				"rank": leadership_rank,
+				"title": leadership_title,
+				"stipend": 1000,
+				"required_cgpa": req_cgpa
+			}
+	return {
+		"promoted": false,
+		"rank": leadership_rank,
+		"title": leadership_title,
+		"stipend": 4000,
+		"required_cgpa": 4.40
+	}
+
+
+static func claim_daily_streak(day_num: int) -> Dictionary:
+	if day_num <= last_streak_day and last_streak_day > 0:
+		return {
+			"claimed": false,
+			"streak": attendance_streak,
+			"reward_cash": 0,
+			"reward_cgpa": 0.0,
+			"is_milestone": false
+		}
+	if last_streak_day == 0 or day_num == last_streak_day + 1:
+		attendance_streak += 1
+	else:
+		attendance_streak = 1
+	last_streak_day = maxi(1, day_num)
+	var is_milestone: bool = (attendance_streak % 7 == 0)
+	var cash_bonus: int = 10000 if is_milestone else (mini(7, attendance_streak) * 1000)
+	var cgpa_bonus: float = 0.08 if is_milestone else 0.02
+	save_to_disk()
+	return {
+		"claimed": true,
+		"streak": attendance_streak,
+		"reward_cash": cash_bonus,
+		"reward_cgpa": cgpa_bonus,
+		"is_milestone": is_milestone
+	}
+
 const SAVE_PATH: String = "user://student_profile.json"
 
 static func apply_admission(
@@ -276,7 +349,11 @@ static func get_profile_data() -> Dictionary:
 		"backpack_items": backpack_items,
 		"current_level": current_level,
 		"current_semester": current_semester,
-		"degree_awarded": degree_awarded
+		"degree_awarded": degree_awarded,
+		"leadership_rank": leadership_rank,
+		"leadership_title": leadership_title,
+		"attendance_streak": attendance_streak,
+		"last_streak_day": last_streak_day
 	}
 
 
@@ -371,6 +448,10 @@ static func load_from_disk() -> bool:
 	current_level = int(d.get("current_level", 100))
 	current_semester = int(d.get("current_semester", 1))
 	degree_awarded = String(d.get("degree_awarded", ""))
+	leadership_rank = int(d.get("leadership_rank", 0))
+	leadership_title = String(d.get("leadership_title", "Student Member"))
+	attendance_streak = int(d.get("attendance_streak", 0))
+	last_streak_day = int(d.get("last_streak_day", 0))
 	return true
 
 

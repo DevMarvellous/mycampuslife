@@ -298,6 +298,14 @@ func _create_clout_badge() -> void:
 
 
 func get_clout_title() -> String:
+	if StudentProfile.leadership_rank >= 4:
+		return "★ SUG President"
+	elif StudentProfile.leadership_rank == 3:
+		return "★ Fellowship Coord"
+	elif StudentProfile.leadership_rank == 2:
+		return "★ Welfare Sec"
+	elif StudentProfile.leadership_rank == 1:
+		return "★ Course Rep"
 	var cgpa_val: float = needs_manager.cgpa if needs_manager else 3.5
 	var cash_val: int = needs_manager.money if needs_manager else 5000
 	var has_gen: bool = StudentProfile.owned_upgrades.has("generator")
@@ -312,7 +320,7 @@ func get_clout_title() -> String:
 		return "💻 Campus Tech Bro"
 	elif cgpa_val >= 3.8:
 		return "📚 Dean's List"
-	return "🎒 100L Fresher"
+	return "🎒 %dL Scholar" % StudentProfile.current_level
 
 
 func update_clout_badge() -> void:

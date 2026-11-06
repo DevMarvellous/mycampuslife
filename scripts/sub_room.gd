@@ -10,6 +10,7 @@ extends "res://scripts/base_room.gd"
 
 @onready var ceiling_fan_1: MeshInstance3D = get_node_or_null("SUBFixtures/CeilingFan1") as MeshInstance3D
 @onready var ceiling_fan_2: MeshInstance3D = get_node_or_null("SUBFixtures/CeilingFan2") as MeshInstance3D
+@onready var comrade_ojo: NPC3D = get_node_or_null("NPCs/ComradeOjo") as NPC3D
 
 
 func _ready() -> void:
@@ -21,6 +22,44 @@ func _ready() -> void:
 		active_ceiling_fans.append(ceiling_fan_1)
 	if ceiling_fan_2:
 		active_ceiling_fans.append(ceiling_fan_2)
+
+	if comrade_ojo:
+		comrade_ojo.dialogue_requested.connect(_on_comrade_ojo_talked)
+
+
+func _on_comrade_ojo_talked(_npc: NPC3D, pl: CharacterBody3D) -> void:
+	if not pl:
+		return
+	var needs: NeedsManager = pl.get_node_or_null("NeedsManager") as NeedsManager
+	var cgpa_val: float = needs.cgpa if needs else StudentProfile.cgpa
+	var prom: Dictionary = StudentProfile.promote_leadership(cgpa_val)
+	var title_str: String = String(prom.get("title", "Student Member"))
+	var req_cgpa: float = float(prom.get("required_cgpa", 3.0))
+
+	if bool(prom.get("promoted", false)):
+		var stipend: int = int(prom.get("stipend", 2000))
+		if needs:
+			needs.modify_money(stipend)
+			needs.modify_faith(25.0)
+		if SoundManager:
+			SoundManager.play_cheer()
+		if pl.has_method("play_celebrate_animation"):
+			pl.play_celebrate_animation("★ ELECTED: %s!" % title_str)
+		if pl.has_method("display_notification"):
+			pl.display_notification("★ SUG ELEVATION: Comrade Ojo commissions you as %s! (+₦%d Leadership Allowance, +25 Faith)" % [title_str, stipend])
+		if pl.has_method("update_clout_badge"):
+			pl.update_clout_badge()
+	else:
+		if StudentProfile.leadership_rank >= 4:
+			if needs:
+				needs.modify_money(1500)
+			if pl.has_method("display_notification"):
+				pl.display_notification("✊ Comrade Ojo salutes Mr. President: 'Respect to our SUG Executive President! Keep serving Nigerian students!' (+₦1,500 Honorarium)")
+		else:
+			if pl.has_method("display_notification"):
+				pl.display_notification("✊ Comrade Ojo reviews credentials: 'Current Rank: %s. Raise CGPA to %.2f to qualify for next SUG election!' (+5 Faith)" % [title_str, req_cgpa])
+				if needs:
+					needs.modify_faith(5.0)
 
 
 func _on_player_passed_out(_reason: String) -> void:

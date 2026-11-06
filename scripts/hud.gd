@@ -87,6 +87,8 @@ const CAMPUS_OPPORTUNITIES: Array[Dictionary] = [
 
 func _ready() -> void:
 	TimeSystem.minute_passed.connect(_update_time_display)
+	if TimeSystem.has_signal("day_started") and not TimeSystem.day_started.is_connected(claim_daily_streak_bonus):
+		TimeSystem.day_started.connect(claim_daily_streak_bonus)
 	_create_objective_pill_ui()
 	if OS.has_feature("web"):
 		var top_panel: Control = get_node_or_null("TopPanel") as Control
@@ -101,6 +103,30 @@ func _ready() -> void:
 	if CampusEvents:
 		if not CampusEvents.event_triggered.is_connected(_on_campus_event_triggered):
 			CampusEvents.event_triggered.connect(_on_campus_event_triggered)
+
+
+func claim_daily_streak_bonus(day_num: int = -1) -> Dictionary:
+	var target_day: int = day_num if day_num > 0 else TimeSystem.day
+	var res: Dictionary = StudentProfile.claim_daily_streak(target_day)
+	if bool(res.get("claimed", false)):
+		var cur_scene: Node = get_tree().current_scene if get_tree() else null
+		var p: Node = cur_scene.get_node_or_null("Player3D") if cur_scene else null
+		var cash_b: int = int(res.get("reward_cash", 1000))
+		var cgpa_b: float = float(res.get("reward_cgpa", 0.02))
+		var st_cnt: int = int(res.get("streak", 1))
+		if p:
+			var needs: NeedsManager = p.get_node_or_null("NeedsManager") as NeedsManager
+			if needs:
+				needs.modify_money(cash_b)
+				needs.modify_cgpa(cgpa_b)
+				needs.modify_faith(15.0)
+				StudentProfile.money = needs.money
+				StudentProfile.cgpa = needs.cgpa
+				StudentProfile.save_to_disk()
+		var banner_title: String = "★ 7-DAY VC EXCELLENCE MILESTONE!" if bool(res.get("is_milestone", false)) else ("★ DAY %d ATTENDANCE STREAK!" % st_cnt)
+		var banner_desc: String = "Consistent scholar! Earned +₦%d Stipend, +%.2f CGPA & +15 Faith!" % [cash_b, cgpa_b]
+		show_event_banner(banner_title, banner_desc)
+	return res
 
 
 func trigger_tasks_sheet() -> void:
